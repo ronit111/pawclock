@@ -321,10 +321,15 @@ const QuickLogPanel = memo(function QuickLogPanel({
       {/* Sheet */}
       <div
         ref={sheetRef}
-        className="fixed left-0 right-0 z-50 flex flex-col"
+        className={`${
+          sheetState === 'expanded'
+            ? 'fixed left-0 right-0 z-50'
+            : 'shrink-0'
+        } flex flex-col`}
         style={{
-          bottom: 'env(safe-area-inset-bottom, 0px)',
-          marginBottom: 60, // above nav
+          ...(sheetState === 'expanded'
+            ? { bottom: 'env(safe-area-inset-bottom, 0px)', marginBottom: 60 }
+            : {}),
           height: sheetHeight,
           background: 'rgba(26, 24, 22, 0.97)',
           backdropFilter: 'blur(24px) saturate(1.4)',
@@ -592,7 +597,7 @@ const QuickLogPanel = memo(function QuickLogPanel({
       {/* FAB when collapsed */}
       {sheetState === 'collapsed' && (
         <button
-          className="fixed z-50 flex items-center justify-center rounded-full shadow-xl transition-all duration-200 active:scale-95"
+          className="absolute z-50 flex items-center justify-center rounded-full shadow-xl transition-all duration-200 active:scale-95"
           style={{
             right: 20,
             bottom: `calc(env(safe-area-inset-bottom, 0px) + 80px)`,

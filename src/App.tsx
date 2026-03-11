@@ -176,14 +176,14 @@ export default function App() {
           )}
         </main>
 
-        <BottomNav activeTab={tab} onTabChange={setTab} />
-
         <QuickLogPanel
           petId={activePet.id}
           isSleeping={isSleeping}
           onLog={handleLog}
           todayCounts={todayCounts}
         />
+
+        <BottomNav activeTab={tab} onTabChange={setTab} />
       </div>
     </div>
   );

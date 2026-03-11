@@ -66,10 +66,11 @@ body {
 .app-frame {
   width: 100%;
   max-width: 430px;
-  min-height: 100dvh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow: hidden;
   background: var(--color-surface);
   /* Creates a containing block for fixed-position children (sheet, backdrop, FAB)
      so they're constrained to the 430px frame instead of spanning the viewport */
