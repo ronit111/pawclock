@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="108" fill="#0F0E0C"/>
+  <!-- Clock face -->
+  <circle cx="256" cy="240" r="160" fill="none" stroke="#E8A849" stroke-width="6" opacity="0.3"/>
+  <!-- Hour marks -->
+  <circle cx="256" cy="88" r="6" fill="#E8A849" opacity="0.5"/>
+  <circle cx="256" cy="392" r="6" fill="#E8A849" opacity="0.5"/>
+  <circle cx="100" cy="240" r="6" fill="#E8A849" opacity="0.5"/>
+  <circle cx="412" cy="240" r="6" fill="#E8A849" opacity="0.5"/>
+  <!-- Clock hands suggesting time -->
+  <line x1="256" y1="240" x2="256" y2="130" stroke="#F5F0E8" stroke-width="6" stroke-linecap="round"/>
+  <line x1="256" y1="240" x2="340" y2="200" stroke="#F5F0E8" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+  <!-- Center dot -->
+  <circle cx="256" cy="240" r="10" fill="#E8A849"/>
+  <!-- Paw print below clock -->
+  <circle cx="230" cy="420" r="14" fill="#5B8A8A" opacity="0.7"/>
+  <circle cx="282" cy="420" r="14" fill="#D4A843" opacity="0.7"/>
+  <circle cx="210" cy="395" r="10" fill="#8B6B4A" opacity="0.6"/>
+  <circle cx="302" cy="395" r="10" fill="#8B6B4A" opacity="0.6"/>
+  <ellipse cx="256" cy="452" rx="30" ry="22" fill="#F5F0E8" opacity="0.2"/>
+</svg>
