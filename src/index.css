@@ -55,6 +55,36 @@ body {
   flex-direction: column;
 }
 
+/* ─── App shell: mobile-first centered frame ────────────── */
+.app-shell {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  background: var(--color-surface);
+}
+
+.app-frame {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: var(--color-surface);
+  /* Creates a containing block for fixed-position children (sheet, backdrop, FAB)
+     so they're constrained to the 430px frame instead of spanning the viewport */
+  transform: translateZ(0);
+}
+
+/* On desktop, add subtle side borders for definition */
+@media (min-width: 431px) {
+  .app-frame {
+    border-left: 1px solid rgba(245, 240, 232, 0.04);
+    border-right: 1px solid rgba(245, 240, 232, 0.04);
+    box-shadow: 0 0 80px rgba(0, 0, 0, 0.3);
+  }
+}
+
 /* Data/number display uses Instrument Serif */
 .font-data {
   font-family: var(--font-display);

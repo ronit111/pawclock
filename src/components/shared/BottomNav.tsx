@@ -48,10 +48,10 @@ const tabs: Array<{ id: NavTab; label: string; Icon: React.FC }> = [
 const BottomNav = memo(function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40"
+      className="sticky bottom-0 z-40 shrink-0"
       style={{
         paddingBottom: 'env(safe-area-inset-bottom)',
-        background: 'rgba(15, 14, 12, 0.85)',
+        background: 'rgba(15, 14, 12, 0.92)',
         backdropFilter: 'blur(20px) saturate(1.6)',
         WebkitBackdropFilter: 'blur(20px) saturate(1.6)',
         borderTop: '1px solid rgba(245, 240, 232, 0.06)',

@@ -132,54 +132,59 @@ export default function App() {
 
   // ─── Onboarding ───────────────────────────────────────────────
   if (!isOnboarded || !activePet) {
-    return <Onboarding onComplete={handleOnboardingComplete} />;
+    return (
+      <div className="app-shell">
+        <div className="app-frame">
+          <Onboarding onComplete={handleOnboardingComplete} />
+        </div>
+      </div>
+    );
   }
 
   // ─── Main App ─────────────────────────────────────────────────
   return (
-    <div
-      className="flex flex-col min-h-dvh"
-      style={{ background: 'var(--color-surface)' }}
-    >
-      <main
-        className="flex-1 overflow-y-auto"
-        style={{ paddingTop: 'env(safe-area-inset-top)' }}
-      >
-        {tab === 'dashboard' && predictions && (
-          <Dashboard
-            pet={activePet}
-            prediction={predictions}
-            events={events}
-          />
-        )}
-        {tab === 'dashboard' && !predictions && (
-          <div className="flex items-center justify-center h-64">
-            <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
-              Generating predictions...
-            </p>
-          </div>
-        )}
-        {tab === 'history' && (
-          <History events={events} petName={activePet.name} />
-        )}
-        {tab === 'settings' && (
-          <Settings
-            pet={activePet}
-            settings={settings}
-            onSettingsChange={updateSettings}
-            onResetData={handleResetData}
-          />
-        )}
-      </main>
+    <div className="app-shell">
+      <div className="app-frame">
+        <main
+          className="flex-1 overflow-y-auto"
+          style={{ paddingTop: 'env(safe-area-inset-top)' }}
+        >
+          {tab === 'dashboard' && predictions && (
+            <Dashboard
+              pet={activePet}
+              prediction={predictions}
+              events={events}
+            />
+          )}
+          {tab === 'dashboard' && !predictions && (
+            <div className="flex items-center justify-center h-64">
+              <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
+                Generating predictions...
+              </p>
+            </div>
+          )}
+          {tab === 'history' && (
+            <History events={events} petName={activePet.name} />
+          )}
+          {tab === 'settings' && (
+            <Settings
+              pet={activePet}
+              settings={settings}
+              onSettingsChange={updateSettings}
+              onResetData={handleResetData}
+            />
+          )}
+        </main>
 
-      <BottomNav activeTab={tab} onTabChange={setTab} />
+        <BottomNav activeTab={tab} onTabChange={setTab} />
 
-      <QuickLogPanel
-        petId={activePet.id}
-        isSleeping={isSleeping}
-        onLog={handleLog}
-        todayCounts={todayCounts}
-      />
+        <QuickLogPanel
+          petId={activePet.id}
+          isSleeping={isSleeping}
+          onLog={handleLog}
+          todayCounts={todayCounts}
+        />
+      </div>
     </div>
   );
 }
