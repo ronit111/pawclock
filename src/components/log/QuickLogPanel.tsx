@@ -356,7 +356,7 @@ const QuickLogPanel = memo(function QuickLogPanel({
         </button>
 
         {/* Event type buttons */}
-        <div className="flex gap-3 px-4 shrink-0">
+        <div className="flex gap-3 px-5 shrink-0">
           {(['sleep', 'pee', 'poop'] as const).map((type) => {
             const colorMap = { sleep: 'var(--color-sleep)', pee: 'var(--color-pee)', poop: 'var(--color-poop)' };
             const labelMap = { sleep: sleepLabel, pee: 'Pee', poop: 'Poop' };
@@ -386,7 +386,7 @@ const QuickLogPanel = memo(function QuickLogPanel({
         {/* Today summary */}
         {sheetState === 'peek' && (
           <div
-            className="px-4 mt-3 text-xs"
+            className="px-5 mt-3 text-xs"
             style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
           >
             Today: {todayCounts.pee} pee · {todayCounts.poop} poop · {todayCounts.sleep} sleep
@@ -396,7 +396,7 @@ const QuickLogPanel = memo(function QuickLogPanel({
         {/* Expanded detail panel */}
         {sheetState === 'expanded' && activeType && (
           <div
-            className="flex flex-col gap-4 px-4 mt-4 overflow-y-auto flex-1"
+            className="flex flex-col gap-4 px-5 mt-4 overflow-y-auto flex-1"
             style={{ WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'] }}
           >
             {/* Sleep */}

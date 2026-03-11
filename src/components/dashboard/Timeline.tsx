@@ -69,7 +69,6 @@ function DensityRiver({
 
   // Build path data for the density shape — a filled area chart
   // Left edge follows the lane left boundary, right edge follows density curve
-  const binH = TIMELINE_HEIGHT / BINS;
   const maxExtend = laneWidth * 0.85; // max width of density fill
 
   // Create smooth density curve using the centerline

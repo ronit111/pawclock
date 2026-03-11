@@ -80,7 +80,7 @@ const History = memo(function History({ events, petName }: HistoryProps) {
     >
       {/* Header */}
       <div
-        className="px-4 pt-6 pb-4 animate-entrance animate-entrance-1"
+        className="px-5 pt-6 pb-4 animate-entrance animate-entrance-1"
         style={{ paddingTop: 'max(1.5rem, env(safe-area-inset-top))' }}
       >
         <h1
@@ -95,7 +95,7 @@ const History = memo(function History({ events, petName }: HistoryProps) {
       </div>
 
       {/* 7-day stats */}
-      <div className="grid grid-cols-2 gap-3 px-4 mb-4 animate-entrance animate-entrance-2">
+      <div className="grid grid-cols-2 gap-3 px-5 mb-5 animate-entrance animate-entrance-2">
         <div
           className="rounded-2xl p-4 flex flex-col gap-1"
           style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(212,168,67,0.08)' }}
@@ -133,7 +133,7 @@ const History = memo(function History({ events, petName }: HistoryProps) {
       </div>
 
       {/* Filter chips */}
-      <div className="flex gap-2 px-4 mb-4 overflow-x-auto animate-entrance animate-entrance-3" role="group" aria-label="Filter events by type">
+      <div className="flex gap-2 px-5 mb-5 overflow-x-auto animate-entrance animate-entrance-3" role="group" aria-label="Filter events by type">
         {filterOptions.map(({ value, label, color }) => (
           <button
             key={value}
@@ -154,7 +154,7 @@ const History = memo(function History({ events, petName }: HistoryProps) {
       </div>
 
       {/* Event list grouped by day */}
-      <div className="flex flex-col px-4 gap-4">
+      <div className="flex flex-col px-5 gap-5">
         {grouped.length === 0 && (
           <div
             className="rounded-2xl p-6 text-center"

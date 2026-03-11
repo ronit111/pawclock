@@ -108,7 +108,7 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
 
   return (
     <div
-      className="flex flex-col gap-3 px-4 pt-4 pb-2"
+      className="flex flex-col gap-4 px-5 pt-5 pb-2"
       style={{ minHeight: '100%' }}
     >
       {/* Header */}

@@ -69,9 +69,9 @@ function parseTimeInput(val: string): number {
 
 function WelcomeStep({ onNext }: { onNext: () => void }) {
   return (
-    <div className="flex flex-col items-center gap-6 py-8 px-4 text-center">
+    <div className="flex flex-col items-center gap-8 py-10 px-6 text-center">
       {/* Logo/wordmark */}
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-col items-center gap-4">
         <div
           className="flex items-center justify-center rounded-3xl"
           style={{ width: 80, height: 80, background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.08)' }}
@@ -92,17 +92,17 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
           PawClock
         </h1>
         <p
-          className="text-base max-w-xs"
+          className="text-base max-w-[280px]"
           style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}
         >
-          Learn your pet's natural rhythms. Predict sleep, bathroom, and meal needs — before they happen.
+          Learn your pet's natural rhythms. Predict sleep, bathroom, and meal needs before they happen.
         </p>
       </div>
 
-      <div className="flex flex-col gap-2 w-full max-w-xs">
+      <div className="flex flex-col gap-3 w-full max-w-[320px]">
         <div
-          className="rounded-xl p-3 flex items-center gap-3"
-          style={{ background: 'var(--color-surface-raised)' }}
+          className="rounded-2xl px-4 py-3.5 flex items-center gap-3"
+          style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
         >
           <span style={{ color: 'var(--color-sleep)' }}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M16 11A7 7 0 119 4a5 5 0 107 7z" fill="currentColor" /></svg>
@@ -112,8 +112,8 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
           </span>
         </div>
         <div
-          className="rounded-xl p-3 flex items-center gap-3"
-          style={{ background: 'var(--color-surface-raised)' }}
+          className="rounded-2xl px-4 py-3.5 flex items-center gap-3"
+          style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
         >
           <span style={{ color: 'var(--color-pee)' }}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2C10 2 6 8 6 13a4 4 0 008 0C14 8 10 2 10 2z" fill="currentColor" /></svg>
@@ -123,8 +123,8 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
           </span>
         </div>
         <div
-          className="rounded-xl p-3 flex items-center gap-3"
-          style={{ background: 'var(--color-surface-raised)' }}
+          className="rounded-2xl px-4 py-3.5 flex items-center gap-3"
+          style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
         >
           <span style={{ color: 'var(--color-success)' }}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 10l5 5 9-9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -137,7 +137,7 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
 
       <button
         onClick={onNext}
-        className="w-full max-w-xs rounded-2xl font-semibold text-base"
+        className="w-full max-w-[320px] rounded-2xl font-semibold text-base"
         style={{
           minHeight: 52,
           background: 'var(--color-accent)',
@@ -160,10 +160,10 @@ function SpeciesStep({
   onChange: (s: Species) => void;
 }) {
   return (
-    <div className="flex flex-col gap-6 px-4">
+    <div className="flex flex-col gap-8 px-6">
       <div>
         <h2
-          className="text-2xl mb-1"
+          className="text-2xl mb-2"
           style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
         >
           What kind of pet?
@@ -172,7 +172,7 @@ function SpeciesStep({
           We'll use species-specific biological priors.
         </p>
       </div>
-      <div className="flex gap-3">
+      <div className="flex gap-4">
         {(['dog', 'cat'] as Species[]).map((s) => (
           <button
             key={s}
@@ -180,7 +180,7 @@ function SpeciesStep({
             aria-pressed={value === s}
             className="flex-1 flex flex-col items-center justify-center gap-3 rounded-2xl transition-all duration-200"
             style={{
-              minHeight: 140,
+              minHeight: 150,
               background: value === s ? 'var(--color-surface-overlay)' : 'var(--color-surface-raised)',
               border: `2px solid ${value === s ? 'var(--color-accent)' : 'rgba(245,240,232,0.08)'}`,
               color: value === s ? 'var(--color-accent)' : 'var(--color-text-secondary)',
@@ -216,9 +216,9 @@ function BreedStep({
     : breeds;
 
   return (
-    <div className="flex flex-col gap-4 px-4">
+    <div className="flex flex-col gap-5 px-6">
       <div>
-        <h2 className="text-2xl mb-1" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
+        <h2 className="text-2xl mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
           What breed?
         </h2>
         <p className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
@@ -230,7 +230,7 @@ function BreedStep({
         value={query}
         onChange={(e) => { setQuery(e.target.value); onChange(e.target.value); }}
         placeholder="Search breed..."
-        className="rounded-xl px-4 py-3 text-base outline-none"
+        className="rounded-2xl px-4 py-3 text-base outline-none"
         style={{
           background: 'var(--color-surface-raised)',
           border: '1px solid rgba(245,240,232,0.1)',
@@ -242,9 +242,9 @@ function BreedStep({
         aria-label="Search breed"
       />
       <div
-        className="flex flex-col overflow-y-auto rounded-xl"
+        className="flex flex-col overflow-y-auto rounded-2xl"
         style={{
-          maxHeight: 280,
+          maxHeight: 260,
           background: 'var(--color-surface-raised)',
           border: '1px solid rgba(245,240,232,0.06)',
         }}
@@ -287,9 +287,9 @@ function DetailsStep({
   const ageYears = (form.ageMonths / 12).toFixed(1);
 
   return (
-    <div className="flex flex-col gap-5 px-4">
+    <div className="flex flex-col gap-6 px-6">
       <div>
-        <h2 className="text-2xl mb-1" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
+        <h2 className="text-2xl mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
           A few details
         </h2>
         <p className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
@@ -298,7 +298,10 @@ function DetailsStep({
       </div>
 
       {/* Age */}
-      <div className="flex flex-col gap-2">
+      <div
+        className="flex flex-col gap-3 rounded-2xl px-4 py-4"
+        style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
+      >
         <div className="flex items-center justify-between">
           <label className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
             Age
@@ -327,7 +330,10 @@ function DetailsStep({
       </div>
 
       {/* Weight */}
-      <div className="flex flex-col gap-2">
+      <div
+        className="flex flex-col gap-3 rounded-2xl px-4 py-4"
+        style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
+      >
         <label className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
           Weight
         </label>
@@ -341,11 +347,11 @@ function DetailsStep({
             onChange={(e) => onChange({ weightKg: parseFloat(e.target.value) || 0 })}
             className="rounded-xl px-4 py-3 text-base outline-none w-28"
             style={{
-              background: 'var(--color-surface-raised)',
+              background: 'var(--color-surface-overlay)',
               border: '1px solid rgba(245,240,232,0.1)',
               color: 'var(--color-text-primary)',
               fontFamily: 'var(--font-display)',
-              minHeight: 52,
+              minHeight: 48,
             }}
             aria-label="Weight in kg"
           />
@@ -353,62 +359,65 @@ function DetailsStep({
         </div>
       </div>
 
-      {/* Neutered */}
-      <div className="flex items-center justify-between rounded-xl px-4 py-3" style={{ background: 'var(--color-surface-raised)' }}>
-        <span className="text-sm" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}>
-          Neutered / Spayed
-        </span>
-        <button
-          onClick={() => onChange({ neutered: !form.neutered })}
-          aria-pressed={form.neutered}
-          aria-label="Toggle neutered"
-          className="rounded-full transition-all duration-200"
-          style={{
-            width: 48, height: 28,
-            background: form.neutered ? 'var(--color-accent)' : 'var(--color-surface)',
-            border: '1px solid rgba(245,240,232,0.12)',
-            position: 'relative',
-          }}
-        >
-          <span className="absolute rounded-full transition-all duration-200" style={{ width: 20, height: 20, background: 'white', top: 3, left: form.neutered ? 25 : 3 }} />
-        </button>
-      </div>
-
-      {/* Indoor */}
-      <div className="flex items-center justify-between rounded-xl px-4 py-3" style={{ background: 'var(--color-surface-raised)' }}>
-        <span className="text-sm" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}>
-          Indoor only
-        </span>
-        <button
-          onClick={() => onChange({ indoor: !form.indoor })}
-          aria-pressed={form.indoor}
-          aria-label="Toggle indoor"
-          className="rounded-full transition-all duration-200"
-          style={{
-            width: 48, height: 28,
-            background: form.indoor ? 'var(--color-accent)' : 'var(--color-surface)',
-            border: '1px solid rgba(245,240,232,0.12)',
-            position: 'relative',
-          }}
-        >
-          <span className="absolute rounded-full transition-all duration-200" style={{ width: 20, height: 20, background: 'white', top: 3, left: form.indoor ? 25 : 3 }} />
-        </button>
+      {/* Toggles group */}
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
+      >
+        <div className="flex items-center justify-between px-4 py-3.5" style={{ borderBottom: '1px solid rgba(245,240,232,0.05)' }}>
+          <span className="text-sm" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}>
+            Neutered / Spayed
+          </span>
+          <button
+            onClick={() => onChange({ neutered: !form.neutered })}
+            aria-pressed={form.neutered}
+            aria-label="Toggle neutered"
+            className="rounded-full transition-all duration-200"
+            style={{
+              width: 48, height: 28,
+              background: form.neutered ? 'var(--color-accent)' : 'var(--color-surface)',
+              border: '1px solid rgba(245,240,232,0.12)',
+              position: 'relative',
+            }}
+          >
+            <span className="absolute rounded-full transition-all duration-200" style={{ width: 20, height: 20, background: 'white', top: 3, left: form.neutered ? 25 : 3 }} />
+          </button>
+        </div>
+        <div className="flex items-center justify-between px-4 py-3.5">
+          <span className="text-sm" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}>
+            Indoor only
+          </span>
+          <button
+            onClick={() => onChange({ indoor: !form.indoor })}
+            aria-pressed={form.indoor}
+            aria-label="Toggle indoor"
+            className="rounded-full transition-all duration-200"
+            style={{
+              width: 48, height: 28,
+              background: form.indoor ? 'var(--color-accent)' : 'var(--color-surface)',
+              border: '1px solid rgba(245,240,232,0.12)',
+              position: 'relative',
+            }}
+          >
+            <span className="absolute rounded-full transition-all duration-200" style={{ width: 20, height: 20, background: 'white', top: 3, left: form.indoor ? 25 : 3 }} />
+          </button>
+        </div>
       </div>
 
       {/* Diet type */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         <span className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
           Diet Type
         </span>
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-2.5 flex-wrap">
           {(['dry', 'wet', 'raw', 'mixed'] as DietType[]).map((d) => (
             <button
               key={d}
               onClick={() => onChange({ dietType: d })}
               aria-pressed={form.dietType === d}
-              className="px-3 py-2 rounded-xl text-sm font-medium capitalize transition-all"
+              className="px-4 py-2.5 rounded-xl text-sm font-medium capitalize transition-all"
               style={{
-                minHeight: 44,
+                minHeight: 42,
                 background: form.dietType === d ? 'var(--color-accent-dim)' : 'var(--color-surface-raised)',
                 color: form.dietType === d ? 'var(--color-accent)' : 'var(--color-text-secondary)',
                 border: `1px solid ${form.dietType === d ? 'var(--color-accent)40' : 'rgba(245,240,232,0.06)'}`,
@@ -446,9 +455,9 @@ function MealsStep({
   }
 
   return (
-    <div className="flex flex-col gap-5 px-4">
+    <div className="flex flex-col gap-6 px-6">
       <div>
-        <h2 className="text-2xl mb-1" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
+        <h2 className="text-2xl mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
           Meal schedule
         </h2>
         <p className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
@@ -460,8 +469,8 @@ function MealsStep({
         {mealTimes.map((t, i) => (
           <div
             key={i}
-            className="flex items-center gap-3 rounded-xl px-4 py-3"
-            style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.06)' }}
+            className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
+            style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
           >
             <div className="flex items-center justify-center rounded-full" style={{ width: 32, height: 32, background: 'var(--color-accent-dim)' }}>
               <span className="text-xs font-bold" style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}>
@@ -506,7 +515,7 @@ function MealsStep({
         {mealTimes.length < 4 && (
           <button
             onClick={addMeal}
-            className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm"
+            className="flex items-center gap-2 px-4 py-3.5 rounded-2xl text-sm"
             style={{
               background: 'var(--color-surface-raised)',
               border: '1px dashed rgba(245,240,232,0.12)',
@@ -529,9 +538,9 @@ function MealsStep({
 
 function NameStep({ name, onChange }: { name: string; onChange: (n: string) => void }) {
   return (
-    <div className="flex flex-col gap-5 px-4">
+    <div className="flex flex-col gap-6 px-6">
       <div>
-        <h2 className="text-2xl mb-1" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
+        <h2 className="text-2xl mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
           What's their name?
         </h2>
         <p className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
@@ -543,7 +552,7 @@ function NameStep({ name, onChange }: { name: string; onChange: (n: string) => v
         value={name}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Luna, Max, Charlie..."
-        className="rounded-xl px-4 py-3 text-xl outline-none"
+        className="rounded-2xl px-5 py-4 text-xl outline-none"
         style={{
           background: 'var(--color-surface-raised)',
           border: '1px solid rgba(245,240,232,0.1)',
@@ -561,7 +570,7 @@ function NameStep({ name, onChange }: { name: string; onChange: (n: string) => v
 
 function DoneStep({ name, onStart }: { name: string; onStart: () => void }) {
   return (
-    <div className="flex flex-col items-center gap-6 py-8 px-4 text-center">
+    <div className="flex flex-col items-center gap-8 py-10 px-6 text-center">
       <div
         className="flex items-center justify-center rounded-full"
         style={{ width: 80, height: 80, background: 'var(--color-success)', opacity: 0.9 }}
@@ -575,19 +584,19 @@ function DoneStep({ name, onStart }: { name: string; onStart: () => void }) {
         <h2 className="text-2xl mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
           {name ? `${name} is all set!` : 'All set!'}
         </h2>
-        <p className="text-base max-w-xs" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}>
+        <p className="text-base max-w-[280px]" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}>
           Start logging sleep, bathroom, and meal events. PawClock will learn{name ? ` ${name}'s` : ''} patterns in just a few days.
         </p>
       </div>
 
       <div
-        className="rounded-xl p-4 text-left max-w-xs w-full"
-        style={{ background: 'var(--color-surface-raised)' }}
+        className="rounded-2xl p-5 text-left w-full max-w-[320px]"
+        style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
       >
-        <p className="text-sm font-semibold mb-2" style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}>
+        <p className="text-sm font-semibold mb-3" style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}>
           Getting started
         </p>
-        <ul className="flex flex-col gap-1.5">
+        <ul className="flex flex-col gap-2">
           {[
             'Tap Sleep when your pet settles down',
             'Tap Wake when they get up',
@@ -604,7 +613,7 @@ function DoneStep({ name, onStart }: { name: string; onStart: () => void }) {
 
       <button
         onClick={onStart}
-        className="w-full max-w-xs rounded-2xl font-semibold text-base"
+        className="w-full max-w-[320px] rounded-2xl font-semibold text-base"
         style={{
           minHeight: 52,
           background: 'var(--color-accent)',
@@ -688,7 +697,7 @@ const Onboarding = memo(function Onboarding({ onComplete }: OnboardingProps) {
       {/* Progress header */}
       {showProgress && (
         <div
-          className="flex items-center gap-3 px-4 pt-4 pb-2 shrink-0"
+          className="flex items-center gap-3 px-6 pt-4 pb-2 shrink-0"
           style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}
         >
           {step > 1 && (
@@ -722,14 +731,14 @@ const Onboarding = memo(function Onboarding({ onComplete }: OnboardingProps) {
       )}
 
       {/* Step content */}
-      <div className="flex-1 overflow-y-auto py-4">
+      <div className="flex-1 overflow-y-auto py-6">
         {stepContent[step]}
       </div>
 
       {/* Next button (for middle steps) */}
       {(showNext || showName) && (
         <div
-          className="px-4 pb-6 shrink-0"
+          className="px-6 pb-6 shrink-0"
           style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
         >
           <button

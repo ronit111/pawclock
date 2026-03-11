@@ -13,7 +13,7 @@ interface SettingsProps {
 function SectionHeader({ title }: { title: string }) {
   return (
     <h2
-      className="text-xs font-semibold uppercase tracking-widest px-4 pb-1 pt-5"
+      className="text-xs font-semibold uppercase tracking-widest px-6 pb-2 pt-7"
       style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
     >
       {title}
@@ -103,7 +103,7 @@ function PetProfileCard({ pet }: { pet: PetProfile }) {
 
   return (
     <div
-      className="mx-4 rounded-2xl overflow-hidden"
+      className="mx-5 rounded-2xl overflow-hidden"
       style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.06)' }}
     >
       <div
@@ -196,7 +196,7 @@ const Settings = memo(function Settings({
     >
       {/* Header */}
       <div
-        className="px-4 pt-6 pb-4"
+        className="px-6 pt-6 pb-2"
         style={{ paddingTop: 'max(1.5rem, env(safe-area-inset-top))' }}
       >
         <h1
@@ -214,7 +214,7 @@ const Settings = memo(function Settings({
       {/* Notifications */}
       <SectionHeader title="Notifications" />
       <div
-        className="mx-4 rounded-2xl overflow-hidden"
+        className="mx-5 rounded-2xl overflow-hidden"
         style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.06)' }}
       >
         <SettingRow label="Push Notifications" description="Get alerts before predicted bathroom events">
@@ -266,7 +266,7 @@ const Settings = memo(function Settings({
       {/* Data */}
       <SectionHeader title="Data" />
       <div
-        className="mx-4 rounded-2xl overflow-hidden"
+        className="mx-5 rounded-2xl overflow-hidden"
         style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.06)' }}
       >
         <div className="px-4 py-3" style={{ borderBottom: '1px solid rgba(245,240,232,0.05)' }}>
@@ -300,7 +300,7 @@ const Settings = memo(function Settings({
       {/* About */}
       <SectionHeader title="About PawClock" />
       <div
-        className="mx-4 rounded-2xl overflow-hidden"
+        className="mx-5 rounded-2xl overflow-hidden"
         style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.06)' }}
       >
         <div className="px-4 py-4 flex flex-col gap-1">
@@ -332,7 +332,7 @@ const Settings = memo(function Settings({
 
       {/* Danger zone */}
       <SectionHeader title="Danger Zone" />
-      <div className="mx-4">
+      <div className="mx-5">
         {!showResetConfirm ? (
           <button
             onClick={() => setShowResetConfirm(true)}
