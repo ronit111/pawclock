@@ -1,16 +1,14 @@
 import { memo } from 'react';
 
 interface ConfidenceIndicatorProps {
-  /** 0 to 1 confidence value */
   confidence: number;
-  /** Days of data the model has learned from */
   effectiveDays?: number;
   size?: 'sm' | 'md';
 }
 
 function getLabel(confidence: number): string {
-  if (confidence < 0.3) return 'Learning...';
-  if (confidence < 0.7) return 'Getting better';
+  if (confidence < 0.3) return 'Learning';
+  if (confidence < 0.7) return 'Improving';
   return 'Confident';
 }
 
@@ -26,9 +24,9 @@ const ConfidenceIndicator = memo(function ConfidenceIndicator({
   size = 'sm',
 }: ConfidenceIndicatorProps) {
   const pct = Math.max(0, Math.min(1, confidence));
-  const isSm = size === 'sm';
-  const radius = isSm ? 14 : 20;
-  const stroke = isSm ? 2.5 : 3;
+  const isSmall = size === 'sm';
+  const radius = isSmall ? 14 : 19;
+  const stroke = isSmall ? 3 : 3.5;
   const svgSize = (radius + stroke) * 2;
   const circumference = 2 * Math.PI * radius;
   const dashOffset = circumference * (1 - pct);
@@ -37,56 +35,51 @@ const ConfidenceIndicator = memo(function ConfidenceIndicator({
 
   return (
     <div
-      className="flex items-center gap-2"
+      className="surface-card-soft flex items-center gap-3 rounded-[18px] px-3 py-2.5"
       role="status"
       aria-label={`Model confidence: ${label}, ${Math.round(pct * 100)}%`}
     >
-      <svg
-        width={svgSize}
-        height={svgSize}
-        viewBox={`0 0 ${svgSize} ${svgSize}`}
-        aria-hidden="true"
-      >
-        {/* Track */}
-        <circle
-          cx={svgSize / 2}
-          cy={svgSize / 2}
-          r={radius}
-          fill="none"
-          stroke="rgba(245,240,232,0.08)"
-          strokeWidth={stroke}
+      <div className="relative shrink-0">
+        <svg width={svgSize} height={svgSize} viewBox={`0 0 ${svgSize} ${svgSize}`} aria-hidden="true">
+          <circle
+            cx={svgSize / 2}
+            cy={svgSize / 2}
+            r={radius}
+            fill="none"
+            stroke="rgba(127,100,76,0.12)"
+            strokeWidth={stroke}
+          />
+          <circle
+            cx={svgSize / 2}
+            cy={svgSize / 2}
+            r={radius}
+            fill="none"
+            stroke={color}
+            strokeWidth={stroke}
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={dashOffset}
+            transform={`rotate(-90 ${svgSize / 2} ${svgSize / 2})`}
+            style={{ transition: 'stroke-dashoffset 600ms cubic-bezier(0.16, 1, 0.3, 1)' }}
+          />
+        </svg>
+        <div
+          className="absolute inset-[7px] rounded-full"
+          style={{ background: 'rgba(255,255,255,0.74)' }}
         />
-        {/* Progress */}
-        <circle
-          cx={svgSize / 2}
-          cy={svgSize / 2}
-          r={radius}
-          fill="none"
-          stroke={color}
-          strokeWidth={stroke}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={dashOffset}
-          transform={`rotate(-90 ${svgSize / 2} ${svgSize / 2})`}
-          style={{ transition: 'stroke-dashoffset 600ms cubic-bezier(0.25, 0.1, 0.25, 1)' }}
-        />
-      </svg>
+      </div>
 
       <div className="flex flex-col">
-        <span
-          className="text-xs font-medium"
-          style={{ color, fontFamily: 'var(--font-body)' }}
-        >
+        <span className="text-sm font-semibold" style={{ color }}>
           {label}
         </span>
-        {effectiveDays !== undefined && (
-          <span
-            className="text-[10px]"
-            style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
-          >
-            {effectiveDays < 1 ? 'Just started' : `${Math.round(effectiveDays)}d data`}
-          </span>
-        )}
+        <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+          {effectiveDays !== undefined
+            ? effectiveDays < 1
+              ? 'Just started'
+              : `${Math.round(effectiveDays)}d of data`
+            : `${Math.round(pct * 100)}% confidence`}
+        </span>
       </div>
     </div>
   );

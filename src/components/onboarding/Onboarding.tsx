@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { memo, useState, type ReactNode } from 'react';
 import type { Species, PetProfile, SizeClass, DietType } from '../../types';
 import { DOG_BREEDS, CAT_BREEDS, isBrachycephalic } from '../../data/breeds';
 import { generateId } from '../../store/db';
@@ -16,7 +16,7 @@ interface FormData {
   neutered: boolean;
   indoor: boolean;
   dietType: DietType;
-  mealTimes: number[]; // decimal hours
+  mealTimes: number[];
 }
 
 const INITIAL_FORM: FormData = {
@@ -65,89 +65,209 @@ function parseTimeInput(val: string): number {
   return hh + mm / 60;
 }
 
-// ─── Step components ──────────────────────────────────────────
+function StepIntro({
+  eyebrow,
+  title,
+  subtitle,
+}: {
+  eyebrow: string;
+  title: ReactNode;
+  subtitle: string;
+}) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="eyebrow-pill w-fit">{eyebrow}</div>
+      <div className="flex flex-col gap-2">
+        <h2 className="page-title">{title}</h2>
+        <p className="page-subtitle">{subtitle}</p>
+      </div>
+    </div>
+  );
+}
+
+function SurfaceBlock({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return <div className={`surface-card p-5 ${className}`}>{children}</div>;
+}
+
+function Toggle({
+  value,
+  onToggle,
+  label,
+}: {
+  value: boolean;
+  onToggle: () => void;
+  label: string;
+}) {
+  return (
+    <button
+      onClick={onToggle}
+      aria-pressed={value}
+      aria-label={label}
+      className="toggle-switch btn-tactile shrink-0"
+      data-active={value}
+      type="button"
+    >
+      <span className="toggle-thumb" />
+    </button>
+  );
+}
+
+function SelectChip({
+  active,
+  onClick,
+  children,
+  tint,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: ReactNode;
+  tint: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      type="button"
+      className="btn-tactile rounded-[18px] px-4 py-3 text-sm font-semibold capitalize"
+      style={{
+        background: active ? tint : 'rgba(255,255,255,0.72)',
+        color: active ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
+        border: `1px solid ${active ? 'rgba(127,100,76,0.22)' : 'rgba(127,100,76,0.1)'}`,
+        boxShadow: active ? 'var(--shadow-sm)' : 'none',
+      }}
+      aria-pressed={active}
+    >
+      {children}
+    </button>
+  );
+}
 
 function WelcomeStep({ onNext }: { onNext: () => void }) {
+  const features = [
+    {
+      title: 'Stay ahead of bathroom windows',
+      text: 'See likely pee and poop timing before your pet starts pacing.',
+      color: 'var(--color-pee-soft)',
+      iconColor: 'var(--color-pee)',
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+          <path d="M11 2.5C11 2.5 6.5 9 6.5 14a4.5 4.5 0 009 0C15.5 9 11 2.5 11 2.5z" fill="currentColor" />
+        </svg>
+      ),
+    },
+    {
+      title: 'Learn sleep rhythms',
+      text: 'Spot nap windows, likely wakeups, and day-to-day changes in rest.',
+      color: 'var(--color-sleep-soft)',
+      iconColor: 'var(--color-sleep)',
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+          <path d="M17.5 11.5a7 7 0 11-5.5-6.8 5.2 5.2 0 105.5 6.8z" fill="currentColor" />
+        </svg>
+      ),
+    },
+    {
+      title: 'Everything stays on-device',
+      text: 'Private by default, with no account creation and no cloud sync required.',
+      color: 'rgba(111,143,119,0.12)',
+      iconColor: 'var(--color-success)',
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+          <path d="M6 11.5l3.2 3.2L16 8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ),
+    },
+  ];
+
   return (
-    <div className="flex flex-col items-center gap-8 py-10 px-6 text-center">
-      {/* Logo/wordmark */}
-      <div className="flex flex-col items-center gap-4">
-        <div
-          className="flex items-center justify-center rounded-3xl"
-          style={{ width: 80, height: 80, background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.08)' }}
-        >
-          <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
-            <path d="M22 6C22 6 12 17 12 27a10 10 0 0020 0C32 17 22 6 22 6z" fill="var(--color-pee)" opacity="0.3" />
-            <path d="M22 6C22 6 16 14 16 22a6 6 0 0012 0C28 14 22 6 22 6z" fill="var(--color-pee)" opacity="0.7" />
-            <circle cx="22" cy="10" r="2.5" fill="var(--color-sleep)" />
-            <circle cx="28" cy="14" r="1.5" fill="var(--color-sleep)" opacity="0.7" />
-            <circle cx="16" cy="14" r="1" fill="var(--color-poop)" opacity="0.7" />
-          </svg>
-        </div>
+    <div
+      className="flex min-h-full flex-col gap-5 px-5 pb-7"
+      style={{ paddingTop: 'calc(env(safe-area-inset-top) + 24px)' }}
+    >
+      <div className="surface-card-hero ambient-glow p-6 animate-entrance animate-entrance-1">
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center justify-between gap-4">
+            <div className="icon-badge" style={{ width: 60, height: 60, borderRadius: 20 }}>
+              <svg width="34" height="34" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                <path d="M22 6C22 6 12 17 12 27a10 10 0 0020 0C32 17 22 6 22 6z" fill="var(--color-pee)" opacity="0.22" />
+                <path d="M22 6C22 6 16 14 16 22a6 6 0 0012 0C28 14 22 6 22 6z" fill="var(--color-pee)" opacity="0.8" />
+                <circle cx="22" cy="10" r="2.5" fill="var(--color-sleep)" />
+                <circle cx="29" cy="14" r="1.5" fill="var(--color-sleep)" opacity="0.8" />
+                <circle cx="15.5" cy="14" r="1.2" fill="var(--color-poop)" opacity="0.9" />
+              </svg>
+            </div>
 
-        <h1
-          className="text-3xl font-medium"
-          style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
-        >
-          PawClock
-        </h1>
-        <p
-          className="text-base max-w-[280px]"
-          style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}
-        >
-          Learn your pet's natural rhythms. Predict sleep, bathroom, and meal needs before they happen.
-        </p>
-      </div>
+            <div className="eyebrow-pill" style={{ color: 'var(--color-accent)' }}>
+              PawClock
+            </div>
+          </div>
 
-      <div className="flex flex-col gap-3 w-full max-w-[320px]">
-        <div
-          className="rounded-2xl px-4 py-3.5 flex items-center gap-3"
-          style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
-        >
-          <span style={{ color: 'var(--color-sleep)' }}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M16 11A7 7 0 119 4a5 5 0 107 7z" fill="currentColor" /></svg>
-          </span>
-          <span className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
-            Track sleep patterns automatically
-          </span>
-        </div>
-        <div
-          className="rounded-2xl px-4 py-3.5 flex items-center gap-3"
-          style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
-        >
-          <span style={{ color: 'var(--color-pee)' }}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2C10 2 6 8 6 13a4 4 0 008 0C14 8 10 2 10 2z" fill="currentColor" /></svg>
-          </span>
-          <span className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
-            Predict bathroom windows before they're urgent
-          </span>
-        </div>
-        <div
-          className="rounded-2xl px-4 py-3.5 flex items-center gap-3"
-          style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
-        >
-          <span style={{ color: 'var(--color-success)' }}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 10l5 5 9-9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          </span>
-          <span className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
-            No cloud. All data stays on your device
-          </span>
+          <div className="flex flex-col gap-3">
+            <h1 className="page-title">
+              Pet care that feels <em>one step ahead</em>.
+            </h1>
+            <p className="page-subtitle">
+              Learn your pet&apos;s natural bathroom and sleep rhythms, then turn those patterns into calm, confident daily care.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { label: 'Sleep', value: 'Rhythms', tint: 'var(--color-sleep-soft)', color: 'var(--color-sleep)' },
+              { label: 'Bathroom', value: 'Windows', tint: 'var(--color-pee-soft)', color: 'var(--color-pee)' },
+              { label: 'Private', value: 'On-device', tint: 'rgba(111,143,119,0.12)', color: 'var(--color-success)' },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="rounded-[20px] px-3 py-3"
+                style={{
+                  background: item.tint,
+                  border: '1px solid rgba(127,100,76,0.08)',
+                }}
+              >
+                <div className="text-[11px] font-semibold uppercase tracking-[0.16em]" style={{ color: item.color }}>
+                  {item.label}
+                </div>
+                <div className="mt-2 text-sm font-semibold leading-tight" style={{ color: 'var(--color-text-primary)' }}>
+                  {item.value}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      <button
-        onClick={onNext}
-        className="w-full max-w-[320px] rounded-2xl font-semibold text-base"
-        style={{
-          minHeight: 52,
-          background: 'var(--color-accent)',
-          color: 'var(--color-surface)',
-          fontFamily: 'var(--font-body)',
-        }}
-        aria-label="Get started"
-      >
-        Get Started
-      </button>
+      <div className="flex flex-col gap-3 animate-entrance animate-entrance-2">
+        {features.map((feature) => (
+          <div
+            key={feature.title}
+            className="surface-card-soft flex items-start gap-4 px-4 py-4"
+          >
+            <div className="icon-badge" style={{ background: feature.color, color: feature.iconColor }}>
+              {feature.icon}
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="text-[15px] font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                {feature.title}
+              </div>
+              <div className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
+                {feature.text}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-auto animate-entrance animate-entrance-3">
+        <button onClick={onNext} className="primary-button btn-tactile w-full" aria-label="Get started" type="button">
+          Create your first pet profile
+        </button>
+      </div>
     </div>
   );
 }
@@ -159,42 +279,92 @@ function SpeciesStep({
   value: Species | null;
   onChange: (s: Species) => void;
 }) {
+  const options: Array<{
+    type: Species;
+    title: string;
+    copy: string;
+    badge: string;
+    tint: string;
+  }> = [
+    {
+      type: 'dog',
+      title: 'Dog',
+      copy: 'Great for bathroom reminders, nap rhythms, and meal-linked predictions.',
+      badge: 'Walking and backyard routines',
+      tint: 'var(--color-pee-soft)',
+    },
+    {
+      type: 'cat',
+      title: 'Cat',
+      copy: 'Useful for litter-box timing, sleep cycles, and indoor routine changes.',
+      badge: 'Indoor pattern tracking',
+      tint: 'var(--color-sleep-soft)',
+    },
+  ];
+
   return (
-    <div className="flex flex-col gap-8 px-6">
-      <div>
-        <h2
-          className="text-2xl mb-2"
-          style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
-        >
-          What kind of pet?
-        </h2>
-        <p className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
-          We'll use species-specific biological priors.
-        </p>
-      </div>
-      <div className="flex gap-4">
-        {(['dog', 'cat'] as Species[]).map((s) => (
-          <button
-            key={s}
-            onClick={() => onChange(s)}
-            aria-pressed={value === s}
-            className="flex-1 flex flex-col items-center justify-center gap-3 rounded-2xl transition-all duration-200"
-            style={{
-              minHeight: 150,
-              background: value === s ? 'var(--color-surface-overlay)' : 'var(--color-surface-raised)',
-              border: `2px solid ${value === s ? 'var(--color-accent)' : 'rgba(245,240,232,0.08)'}`,
-              color: value === s ? 'var(--color-accent)' : 'var(--color-text-secondary)',
-            }}
-          >
-            <span style={{ fontSize: 48 }}>{s === 'dog' ? '🐕' : '🐈'}</span>
-            <span
-              className="text-base font-semibold capitalize"
-              style={{ fontFamily: 'var(--font-body)' }}
+    <div className="flex flex-col gap-6 px-5 pb-6 pt-3">
+      <StepIntro
+        eyebrow="Step 1"
+        title={<>What kind of pet are we learning?</>}
+        subtitle="We use species-specific priors to make the first few predictions feel sensible instead of generic."
+      />
+
+      <div className="grid gap-4">
+        {options.map((option) => {
+          const active = value === option.type;
+          return (
+            <button
+              key={option.type}
+              onClick={() => onChange(option.type)}
+              aria-pressed={active}
+              type="button"
+              className="surface-card btn-tactile flex items-start gap-4 p-5 text-left"
+              style={{
+                background: active
+                  ? `linear-gradient(180deg, ${option.tint} 0%, rgba(255,255,255,0.98) 100%)`
+                  : undefined,
+                borderColor: active ? 'rgba(235,125,98,0.28)' : undefined,
+                boxShadow: active ? 'var(--shadow-md)' : undefined,
+                transform: active ? 'translateY(-1px)' : 'none',
+              }}
             >
-              {s}
-            </span>
-          </button>
-        ))}
+              <div
+                className="icon-badge shrink-0"
+                style={{
+                  width: 58,
+                  height: 58,
+                  borderRadius: 20,
+                  fontSize: 30,
+                  background: active ? 'rgba(255,255,255,0.9)' : option.tint,
+                }}
+              >
+                {option.type === 'dog' ? '🐕' : '🐈'}
+              </div>
+
+              <div className="flex min-w-0 flex-1 flex-col gap-2">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                    {option.title}
+                  </div>
+                  <div
+                    className="rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em]"
+                    style={{
+                      background: active ? 'rgba(235,125,98,0.12)' : 'rgba(255,255,255,0.72)',
+                      color: active ? 'var(--color-accent)' : 'var(--color-text-muted)',
+                    }}
+                  >
+                    {active ? 'Selected' : option.badge}
+                  </div>
+                </div>
+
+                <p className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
+                  {option.copy}
+                </p>
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -216,63 +386,76 @@ function BreedStep({
     : breeds;
 
   return (
-    <div className="flex flex-col gap-5 px-6">
-      <div>
-        <h2 className="text-2xl mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
-          What breed?
-        </h2>
-        <p className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
-          Breed affects physiological priors. "Mixed/Unknown" works great.
-        </p>
-      </div>
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => { setQuery(e.target.value); onChange(e.target.value); }}
-        placeholder="Search breed..."
-        className="rounded-2xl px-4 py-3 text-base outline-none"
-        style={{
-          background: 'var(--color-surface-raised)',
-          border: '1px solid rgba(245,240,232,0.1)',
-          color: 'var(--color-text-primary)',
-          fontFamily: 'var(--font-body)',
-          minHeight: 52,
-        }}
-        autoComplete="off"
-        aria-label="Search breed"
+    <div className="flex flex-col gap-5 px-5 pb-6 pt-3">
+      <StepIntro
+        eyebrow="Step 2"
+        title={<>Choose the breed or type</>}
+        subtitle="Mixed and unknown breeds still work well. This mainly helps PawClock start with a better baseline."
       />
-      <div
-        className="flex flex-col overflow-y-auto rounded-2xl"
-        style={{
-          maxHeight: 260,
-          background: 'var(--color-surface-raised)',
-          border: '1px solid rgba(245,240,232,0.06)',
-        }}
-      >
-        {filtered.slice(0, 20).map((b) => (
-          <button
-            key={b}
-            onClick={() => { setQuery(b); onChange(b); }}
-            className="text-left px-4 py-3 text-sm transition-colors duration-100"
-            style={{
-              color: value === b ? 'var(--color-accent)' : 'var(--color-text-primary)',
-              background: value === b ? 'var(--color-surface-overlay)' : 'transparent',
-              borderBottom: '1px solid rgba(245,240,232,0.04)',
-              fontFamily: 'var(--font-body)',
-              minHeight: 44,
-            }}
-            aria-pressed={value === b}
-            aria-label={`Select breed: ${b}`}
-          >
-            {b}
-          </button>
-        ))}
-        {filtered.length === 0 && (
-          <div className="px-4 py-3 text-sm" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
-            No breeds match. You can type your own.
+
+      <SurfaceBlock className="flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+            Search breeds
           </div>
-        )}
-      </div>
+          <div className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+            {species === 'dog' ? 'Dogs' : 'Cats'}
+          </div>
+        </div>
+
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            onChange(e.target.value);
+          }}
+          placeholder="Search or type your own breed"
+          className="control-input text-base"
+          autoComplete="off"
+          aria-label="Search breed"
+        />
+
+        <div
+          className="surface-card-inset hide-scrollbar overflow-y-auto"
+          style={{ maxHeight: 320 }}
+        >
+          {filtered.slice(0, 24).map((breed, index) => {
+            const active = value === breed;
+            return (
+              <button
+                key={breed}
+                onClick={() => {
+                  setQuery(breed);
+                  onChange(breed);
+                }}
+                type="button"
+                className="btn-tactile flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm"
+                style={{
+                  color: active ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
+                  background: active ? 'rgba(235,125,98,0.12)' : 'transparent',
+                  borderBottom: index < filtered.slice(0, 24).length - 1 ? '1px solid rgba(127,100,76,0.08)' : 'none',
+                }}
+                aria-pressed={active}
+                aria-label={`Select breed: ${breed}`}
+              >
+                <span className="font-medium">{breed}</span>
+                {active && (
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em]" style={{ color: 'var(--color-accent)' }}>
+                    Selected
+                  </span>
+                )}
+              </button>
+            );
+          })}
+
+          {filtered.length === 0 && (
+            <div className="px-4 py-5 text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
+              No breed matched that search. You can keep typing your own custom breed name and continue.
+            </div>
+          )}
+        </div>
+      </SurfaceBlock>
     </div>
   );
 }
@@ -287,29 +470,29 @@ function DetailsStep({
   const ageYears = (form.ageMonths / 12).toFixed(1);
 
   return (
-    <div className="flex flex-col gap-6 px-6">
-      <div>
-        <h2 className="text-2xl mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
-          A few details
-        </h2>
-        <p className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
-          These affect biological timing priors.
-        </p>
-      </div>
+    <div className="flex flex-col gap-5 px-5 pb-6 pt-3">
+      <StepIntro
+        eyebrow="Step 3"
+        title={<>A few details shape the baseline</>}
+        subtitle="These details help the model start closer to your pet&apos;s physiology before enough logs have accumulated."
+      />
 
-      {/* Age */}
-      <div
-        className="flex flex-col gap-3 rounded-2xl px-4 py-4"
-        style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
-      >
-        <div className="flex items-center justify-between">
-          <label className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
-            Age
-          </label>
-          <span className="text-base" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
-            {ageYears} years ({form.ageMonths} mo)
-          </span>
+      <SurfaceBlock className="flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col gap-1">
+            <span className="metric-label">Age</span>
+            <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+              Start with approximate age if needed.
+            </span>
+          </div>
+          <div className="text-right">
+            <div className="metric-value text-[2.2rem]">{ageYears}</div>
+            <div className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+              years
+            </div>
+          </div>
         </div>
+
         <input
           type="range"
           min={1}
@@ -323,112 +506,105 @@ function DetailsStep({
           aria-valuemax={240}
           aria-valuenow={form.ageMonths}
         />
-        <div className="flex justify-between text-[10px]" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
+
+        <div className="flex justify-between text-xs" style={{ color: 'var(--color-text-muted)' }}>
           <span>1 month</span>
           <span>20 years</span>
         </div>
+      </SurfaceBlock>
+
+      <div className="grid grid-cols-[minmax(0,1fr)_120px] gap-4">
+        <SurfaceBlock className="flex flex-col gap-3">
+          <span className="metric-label">Weight</span>
+          <p className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
+            Enter current body weight in kilograms.
+          </p>
+          <div className="flex items-center gap-3">
+            <input
+              type="number"
+              min={0.5}
+              max={100}
+              step={0.1}
+              value={form.weightKg}
+              onChange={(e) => onChange({ weightKg: parseFloat(e.target.value) || 0 })}
+              className="control-input text-[1.4rem] font-data"
+              aria-label="Weight in kg"
+            />
+            <span className="text-sm font-semibold" style={{ color: 'var(--color-text-secondary)' }}>
+              kg
+            </span>
+          </div>
+        </SurfaceBlock>
+
+        <SurfaceBlock className="flex flex-col justify-between gap-3">
+          <span className="metric-label">Snapshot</span>
+          <div className="flex flex-col gap-2">
+            <div className="text-lg font-semibold capitalize" style={{ color: 'var(--color-text-primary)' }}>
+              {form.species ?? 'Pet'}
+            </div>
+            <div className="text-sm capitalize" style={{ color: 'var(--color-text-secondary)' }}>
+              {sizeClassFromWeight(form.weightKg, form.species ?? 'cat')}
+            </div>
+          </div>
+        </SurfaceBlock>
       </div>
 
-      {/* Weight */}
-      <div
-        className="flex flex-col gap-3 rounded-2xl px-4 py-4"
-        style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
-      >
-        <label className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
-          Weight
-        </label>
-        <div className="flex items-center gap-3">
-          <input
-            type="number"
-            min={0.5}
-            max={100}
-            step={0.1}
-            value={form.weightKg}
-            onChange={(e) => onChange({ weightKg: parseFloat(e.target.value) || 0 })}
-            className="rounded-xl px-4 py-3 text-base outline-none w-28"
-            style={{
-              background: 'var(--color-surface-overlay)',
-              border: '1px solid rgba(245,240,232,0.1)',
-              color: 'var(--color-text-primary)',
-              fontFamily: 'var(--font-display)',
-              minHeight: 48,
-            }}
-            aria-label="Weight in kg"
-          />
-          <span className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>kg</span>
-        </div>
-      </div>
-
-      {/* Toggles group */}
-      <div
-        className="rounded-2xl overflow-hidden"
-        style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
-      >
-        <div className="flex items-center justify-between px-4 py-3.5" style={{ borderBottom: '1px solid rgba(245,240,232,0.05)' }}>
-          <span className="text-sm" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}>
-            Neutered / Spayed
-          </span>
-          <button
-            onClick={() => onChange({ neutered: !form.neutered })}
-            aria-pressed={form.neutered}
-            aria-label="Toggle neutered"
-            className="rounded-full transition-all duration-200"
-            style={{
-              width: 48, height: 28,
-              background: form.neutered ? 'var(--color-accent)' : 'var(--color-surface)',
-              border: '1px solid rgba(245,240,232,0.12)',
-              position: 'relative',
-            }}
+      <SurfaceBlock className="flex flex-col gap-1 p-0">
+        {[
+          {
+            label: 'Neutered / Spayed',
+            description: 'Included in the biological baseline',
+            value: form.neutered,
+            onToggle: () => onChange({ neutered: !form.neutered }),
+            aria: 'Toggle neutered',
+          },
+          {
+            label: 'Indoor only',
+            description: 'Useful for routine and activity assumptions',
+            value: form.indoor,
+            onToggle: () => onChange({ indoor: !form.indoor }),
+            aria: 'Toggle indoor',
+          },
+        ].map((item, index) => (
+          <div
+            key={item.label}
+            className="flex items-center justify-between gap-4 px-5 py-4"
+            style={{ borderBottom: index === 0 ? '1px solid rgba(127,100,76,0.08)' : 'none' }}
           >
-            <span className="absolute rounded-full transition-all duration-200" style={{ width: 20, height: 20, background: 'white', top: 3, left: form.neutered ? 25 : 3 }} />
-          </button>
-        </div>
-        <div className="flex items-center justify-between px-4 py-3.5">
-          <span className="text-sm" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}>
-            Indoor only
-          </span>
-          <button
-            onClick={() => onChange({ indoor: !form.indoor })}
-            aria-pressed={form.indoor}
-            aria-label="Toggle indoor"
-            className="rounded-full transition-all duration-200"
-            style={{
-              width: 48, height: 28,
-              background: form.indoor ? 'var(--color-accent)' : 'var(--color-surface)',
-              border: '1px solid rgba(245,240,232,0.12)',
-              position: 'relative',
-            }}
-          >
-            <span className="absolute rounded-full transition-all duration-200" style={{ width: 20, height: 20, background: 'white', top: 3, left: form.indoor ? 25 : 3 }} />
-          </button>
-        </div>
-      </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-[15px] font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                {item.label}
+              </span>
+              <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                {item.description}
+              </span>
+            </div>
+            <Toggle value={item.value} onToggle={item.onToggle} label={item.aria} />
+          </div>
+        ))}
+      </SurfaceBlock>
 
-      {/* Diet type */}
-      <div className="flex flex-col gap-3">
-        <span className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
-          Diet Type
-        </span>
-        <div className="flex gap-2.5 flex-wrap">
-          {(['dry', 'wet', 'raw', 'mixed'] as DietType[]).map((d) => (
-            <button
-              key={d}
-              onClick={() => onChange({ dietType: d })}
-              aria-pressed={form.dietType === d}
-              className="px-4 py-2.5 rounded-xl text-sm font-medium capitalize transition-all"
-              style={{
-                minHeight: 42,
-                background: form.dietType === d ? 'var(--color-accent-dim)' : 'var(--color-surface-raised)',
-                color: form.dietType === d ? 'var(--color-accent)' : 'var(--color-text-secondary)',
-                border: `1px solid ${form.dietType === d ? 'var(--color-accent)40' : 'rgba(245,240,232,0.06)'}`,
-                fontFamily: 'var(--font-body)',
-              }}
+      <SurfaceBlock className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <span className="metric-label">Diet type</span>
+          <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            Meal composition can influence bathroom timing.
+          </span>
+        </div>
+
+        <div className="flex flex-wrap gap-3">
+          {(['dry', 'wet', 'raw', 'mixed'] as DietType[]).map((diet) => (
+            <SelectChip
+              key={diet}
+              active={form.dietType === diet}
+              onClick={() => onChange({ dietType: diet })}
+              tint="rgba(235,125,98,0.14)"
             >
-              {d}
-            </button>
+              {diet}
+            </SelectChip>
           ))}
         </div>
-      </div>
+      </SurfaceBlock>
     </div>
   );
 }
@@ -455,180 +631,185 @@ function MealsStep({
   }
 
   return (
-    <div className="flex flex-col gap-6 px-6">
-      <div>
-        <h2 className="text-2xl mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
-          Meal schedule
-        </h2>
-        <p className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
-          Meal timing predicts post-meal bathroom windows.
-        </p>
-      </div>
+    <div className="flex flex-col gap-5 px-5 pb-6 pt-3">
+      <StepIntro
+        eyebrow="Step 4"
+        title={<>Set the usual meal rhythm</>}
+        subtitle="Bathroom predictions get noticeably better when PawClock knows roughly when meals happen."
+      />
 
       <div className="flex flex-col gap-3">
-        {mealTimes.map((t, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
-            style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
-          >
-            <div className="flex items-center justify-center rounded-full" style={{ width: 32, height: 32, background: 'var(--color-accent-dim)' }}>
-              <span className="text-xs font-bold" style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}>
-                {i + 1}
-              </span>
+        {mealTimes.map((time, index) => (
+          <SurfaceBlock key={index} className="flex items-center gap-4">
+            <div
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[16px]"
+              style={{ background: 'var(--color-accent-dim)', color: 'var(--color-accent)' }}
+            >
+              <span className="text-sm font-semibold">{index + 1}</span>
             </div>
-            <div className="flex-1">
+
+            <div className="flex min-w-0 flex-1 flex-col gap-1">
+              <span className="metric-label">Meal {index + 1}</span>
               <input
                 type="time"
-                value={timeInputValue(t)}
-                onChange={(e) => updateTime(i, e.target.value)}
-                className="text-base outline-none"
-                style={{
-                  background: 'transparent',
-                  color: 'var(--color-text-primary)',
-                  fontFamily: 'var(--font-display)',
-                  colorScheme: 'dark',
-                  border: 'none',
-                  minHeight: 36,
-                }}
-                aria-label={`Meal ${i + 1} time`}
+                value={timeInputValue(time)}
+                onChange={(e) => updateTime(index, e.target.value)}
+                className="control-time text-lg font-data"
+                style={{ colorScheme: 'light' }}
+                aria-label={`Meal ${index + 1} time`}
               />
-              <div className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
-                {formatDecimalHour(t)}
-              </div>
+              <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                {formatDecimalHour(time)}
+              </span>
             </div>
+
             {mealTimes.length > 1 && (
               <button
-                onClick={() => removeMeal(i)}
-                className="p-2 rounded-full"
-                style={{ color: 'var(--color-danger)', background: 'rgba(196,91,91,0.1)' }}
-                aria-label={`Remove meal ${i + 1}`}
+                onClick={() => removeMeal(index)}
+                type="button"
+                className="btn-tactile flex h-10 w-10 items-center justify-center rounded-full"
+                style={{ background: 'rgba(207,107,99,0.12)', color: 'var(--color-danger)' }}
+                aria-label={`Remove meal ${index + 1}`}
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                   <path d="M4 8h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
               </button>
             )}
-          </div>
+          </SurfaceBlock>
         ))}
-
-        {mealTimes.length < 4 && (
-          <button
-            onClick={addMeal}
-            className="flex items-center gap-2 px-4 py-3.5 rounded-2xl text-sm"
-            style={{
-              background: 'var(--color-surface-raised)',
-              border: '1px dashed rgba(245,240,232,0.12)',
-              color: 'var(--color-text-secondary)',
-              fontFamily: 'var(--font-body)',
-              minHeight: 52,
-            }}
-            aria-label="Add another meal time"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-            Add another meal
-          </button>
-        )}
       </div>
+
+      {mealTimes.length < 4 && (
+        <button
+          onClick={addMeal}
+          type="button"
+          className="secondary-button btn-tactile w-full justify-center"
+          aria-label="Add another meal time"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          Add another meal
+        </button>
+      )}
     </div>
   );
 }
 
 function NameStep({ name, onChange }: { name: string; onChange: (n: string) => void }) {
   return (
-    <div className="flex flex-col gap-6 px-6">
-      <div>
-        <h2 className="text-2xl mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
-          What's their name?
-        </h2>
-        <p className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
-          The name that'll appear on your dashboard.
-        </p>
-      </div>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Luna, Max, Charlie..."
-        className="rounded-2xl px-5 py-4 text-xl outline-none"
-        style={{
-          background: 'var(--color-surface-raised)',
-          border: '1px solid rgba(245,240,232,0.1)',
-          color: 'var(--color-text-primary)',
-          fontFamily: 'var(--font-display)',
-          minHeight: 60,
-        }}
-        autoFocus
-        aria-label="Pet name"
-        autoComplete="off"
+    <div className="flex flex-col gap-5 px-5 pb-6 pt-3">
+      <StepIntro
+        eyebrow="Step 5"
+        title={<>What should we call them?</>}
+        subtitle="This is the name that shows up on the dashboard, in reminders, and in your event history."
       />
+
+      <div className="surface-card-hero p-6">
+        <div className="mb-5 flex items-center justify-between gap-4">
+          <div>
+            <div className="metric-label">Profile name</div>
+            <div className="mt-1 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+              Keep it simple and recognizable.
+            </div>
+          </div>
+          <div className="icon-badge" style={{ background: 'var(--color-accent-dim)', color: 'var(--color-accent)' }}>
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <path d="M4 16.5V18h1.5L15 8.5 13.5 7 4 16.5z" fill="currentColor" />
+              <path d="M12.5 8l1.5 1.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          </div>
+        </div>
+
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Luna, Max, Charlie..."
+          className="control-input text-[1.45rem] font-data"
+          autoFocus
+          aria-label="Pet name"
+          autoComplete="off"
+        />
+      </div>
     </div>
   );
 }
 
 function DoneStep({ name, onStart }: { name: string; onStart: () => void }) {
+  const tips = [
+    'Tap Sleep when your pet settles in for a nap or nighttime sleep.',
+    'Log Wake when the sleep session ends so the rhythm model stays accurate.',
+    'Record Pee and Poop after each bathroom event to tighten prediction windows.',
+    'Expect the model to feel much smarter after three to five days of use.',
+  ];
+
   return (
-    <div className="flex flex-col items-center gap-8 py-10 px-6 text-center">
-      <div
-        className="flex items-center justify-center rounded-full"
-        style={{ width: 80, height: 80, background: 'var(--color-success)', opacity: 0.9 }}
-      >
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-          <path d="M8 20l9 9 16-16" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+    <div
+      className="flex min-h-full flex-col gap-5 px-5 pb-7"
+      style={{ paddingTop: 'calc(env(safe-area-inset-top) + 24px)' }}
+    >
+      <div className="surface-card-hero ambient-glow p-6 animate-entrance animate-entrance-1">
+        <div className="flex flex-col gap-5">
+          <div
+            className="flex h-16 w-16 items-center justify-center rounded-[22px]"
+            style={{
+              background: 'rgba(111,143,119,0.14)',
+              color: 'var(--color-success)',
+              boxShadow: '0 18px 30px rgba(111,143,119,0.18)',
+            }}
+          >
+            <svg width="30" height="30" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <path d="M8 20l9 9 16-16" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <h2 className="page-title">
+              {name ? <>{name} is <em>ready</em>.</> : <>You&apos;re ready.</>}
+            </h2>
+            <p className="page-subtitle">
+              Start logging a few daily events and PawClock will begin shaping a routine that feels personal instead of generic.
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div>
-        <h2 className="text-2xl mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
-          {name ? `${name} is all set!` : 'All set!'}
-        </h2>
-        <p className="text-base max-w-[280px]" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}>
-          Start logging sleep, bathroom, and meal events. PawClock will learn{name ? ` ${name}'s` : ''} patterns in just a few days.
-        </p>
-      </div>
+      <SurfaceBlock className="animate-entrance animate-entrance-2 flex flex-col gap-4">
+        <div className="section-head">
+          <div className="section-label" style={{ color: 'var(--color-accent)' }}>
+            First week
+          </div>
+        </div>
 
-      <div
-        className="rounded-2xl p-5 text-left w-full max-w-[320px]"
-        style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.04)' }}
-      >
-        <p className="text-sm font-semibold mb-3" style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}>
-          Getting started
-        </p>
-        <ul className="flex flex-col gap-2">
-          {[
-            'Tap Sleep when your pet settles down',
-            'Tap Wake when they get up',
-            'Log Pee and Poop after bathroom trips',
-            'Predictions improve after 3–5 days',
-          ].map((tip, i) => (
-            <li key={i} className="text-sm flex items-start gap-2" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
-              <span style={{ color: 'var(--color-accent)', marginTop: 2 }}>·</span>
-              {tip}
-            </li>
+        <div className="flex flex-col gap-3">
+          {tips.map((tip) => (
+            <div key={tip} className="flex items-start gap-3">
+              <div
+                className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
+                style={{ background: 'var(--color-accent-dim)', color: 'var(--color-accent)' }}
+              >
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M2 6l2.3 2.3L10 2.7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <p className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
+                {tip}
+              </p>
+            </div>
           ))}
-        </ul>
-      </div>
+        </div>
+      </SurfaceBlock>
 
-      <button
-        onClick={onStart}
-        className="w-full max-w-[320px] rounded-2xl font-semibold text-base"
-        style={{
-          minHeight: 52,
-          background: 'var(--color-accent)',
-          color: 'var(--color-surface)',
-          fontFamily: 'var(--font-body)',
-        }}
-        aria-label="Start using PawClock"
-      >
-        Start Logging
-      </button>
+      <div className="mt-auto animate-entrance animate-entrance-3">
+        <button onClick={onStart} className="primary-button btn-tactile w-full" aria-label="Start using PawClock" type="button">
+          Start logging events
+        </button>
+      </div>
     </div>
   );
 }
-
-// ─── Main Onboarding Wizard ───────────────────────────────────
 
 const Onboarding = memo(function Onboarding({ onComplete }: OnboardingProps) {
   const [step, setStep] = useState(0);
@@ -640,13 +821,20 @@ const Onboarding = memo(function Onboarding({ onComplete }: OnboardingProps) {
 
   function canProceed(): boolean {
     switch (step) {
-      case 0: return true;
-      case 1: return form.species !== null;
-      case 2: return form.breed.length > 1;
-      case 3: return form.ageMonths > 0 && form.weightKg > 0;
-      case 4: return form.mealTimes.length > 0;
-      case 5: return form.name.trim().length > 0;
-      default: return true;
+      case 0:
+        return true;
+      case 1:
+        return form.species !== null;
+      case 2:
+        return form.breed.length > 1;
+      case 3:
+        return form.ageMonths > 0 && form.weightKg > 0;
+      case 4:
+        return form.mealTimes.length > 0;
+      case 5:
+        return form.name.trim().length > 0;
+      default:
+        return true;
     }
   }
 
@@ -671,17 +859,16 @@ const Onboarding = memo(function Onboarding({ onComplete }: OnboardingProps) {
       createdAt: Date.now(),
     };
 
-    // Don't save to IDB here — the store handles persistence + model initialization
     onComplete(pet);
   }
 
   const stepContent = [
     <WelcomeStep key="welcome" onNext={() => setStep(1)} />,
-    <SpeciesStep key="species" value={form.species} onChange={(s) => { updateForm({ species: s }); }} />,
-    <BreedStep key="breed" species={form.species ?? 'cat'} value={form.breed} onChange={(b) => updateForm({ breed: b })} />,
+    <SpeciesStep key="species" value={form.species} onChange={(species) => updateForm({ species })} />,
+    <BreedStep key="breed" species={form.species ?? 'cat'} value={form.breed} onChange={(breed) => updateForm({ breed })} />,
     <DetailsStep key="details" form={form} onChange={updateForm} />,
-    <MealsStep key="meals" mealTimes={form.mealTimes} onChange={(times) => updateForm({ mealTimes: times })} />,
-    <NameStep key="name" name={form.name} onChange={(n) => updateForm({ name: n })} />,
+    <MealsStep key="meals" mealTimes={form.mealTimes} onChange={(mealTimes) => updateForm({ mealTimes })} />,
+    <NameStep key="name" name={form.name} onChange={(name) => updateForm({ name })} />,
     <DoneStep key="done" name={form.name} onStart={handleDone} />,
   ];
 
@@ -690,75 +877,80 @@ const Onboarding = memo(function Onboarding({ onComplete }: OnboardingProps) {
   const showName = step === 5;
 
   return (
-    <div
-      className="flex flex-col min-h-dvh"
-      style={{ background: 'var(--color-surface)' }}
-    >
-      {/* Progress header */}
+    <div className="flex min-h-dvh flex-col" style={{ background: 'transparent' }}>
       {showProgress && (
         <div
-          className="flex items-center gap-3 px-6 pt-4 pb-2 shrink-0"
-          style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}
+          className="shrink-0 px-5 pb-3 pt-4"
+          style={{ paddingTop: 'calc(env(safe-area-inset-top) + 16px)' }}
         >
-          {step > 1 && (
-            <button
-              onClick={() => setStep((s) => s - 1)}
-              className="p-2 rounded-full"
-              style={{ color: 'var(--color-text-secondary)', background: 'var(--color-surface-raised)', minWidth: 40, minHeight: 40 }}
-              aria-label="Go back"
-            >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-                <path d="M11 4L6 9l5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          )}
-          {/* Progress dots */}
-          <div className="flex gap-1.5 flex-1 justify-center">
-            {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-              <div
-                key={i}
-                className="rounded-full transition-all duration-300"
-                style={{
-                  height: 4,
-                  width: i === step - 1 ? 20 : 6,
-                  background: i < step ? 'var(--color-accent)' : i === step - 1 ? 'var(--color-accent)' : 'rgba(245,240,232,0.15)',
-                }}
-              />
-            ))}
+          <div className="surface-card-soft flex items-center gap-3 rounded-[22px] px-3 py-3">
+            {step > 1 ? (
+              <button
+                onClick={() => setStep((current) => current - 1)}
+                type="button"
+                className="btn-tactile flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
+                style={{ background: 'rgba(255,255,255,0.88)', color: 'var(--color-text-secondary)' }}
+                aria-label="Go back"
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                  <path d="M11 4L6 9l5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            ) : (
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/55 text-xs font-semibold" style={{ color: 'var(--color-text-muted)' }}>
+                {step}
+              </div>
+            )}
+
+            <div className="flex min-w-0 flex-1 flex-col gap-2">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                  Setup progress
+                </span>
+                <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                  Step {step} of {TOTAL_STEPS}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                {Array.from({ length: TOTAL_STEPS }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="h-2 flex-1 rounded-full"
+                    style={{
+                      background:
+                        index < step
+                          ? 'linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent-strong) 100%)'
+                          : 'rgba(127,100,76,0.12)',
+                      opacity: index === step - 1 ? 1 : index < step ? 0.84 : 1,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
-          <div style={{ minWidth: 40 }} />
         </div>
       )}
 
-      {/* Step content */}
-      <div className="flex-1 overflow-y-auto py-6">
-        {stepContent[step]}
-      </div>
+      <div className="flex-1 overflow-y-auto hide-scrollbar">{stepContent[step]}</div>
 
-      {/* Next button (for middle steps) */}
       {(showNext || showName) && (
         <div
-          className="px-6 pb-6 shrink-0"
-          style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
+          className="shrink-0 px-5 pb-5 pt-3"
+          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 18px)' }}
         >
-          <button
-            onClick={() => setStep((s) => s + 1)}
-            disabled={!canProceed()}
-            className="w-full rounded-2xl font-semibold text-base transition-all duration-150"
-            style={{
-              minHeight: 52,
-              background: canProceed() ? 'var(--color-accent)' : 'var(--color-surface-overlay)',
-              color: canProceed() ? 'var(--color-surface)' : 'var(--color-text-muted)',
-              fontFamily: 'var(--font-body)',
-            }}
-            aria-label="Continue to next step"
-          >
-            {showName ? 'Almost done →' : 'Continue'}
-          </button>
+          <div className="surface-card-soft rounded-[22px] p-3">
+            <button
+              onClick={() => setStep((current) => current + 1)}
+              disabled={!canProceed()}
+              className="primary-button btn-tactile w-full"
+              aria-label="Continue to next step"
+              type="button"
+            >
+              {showName ? 'Review and finish' : 'Continue'}
+            </button>
+          </div>
         </div>
       )}
-
-      {/* Step 0 has its own button, step 6 has its own button */}
     </div>
   );
 });

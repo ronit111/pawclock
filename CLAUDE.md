@@ -26,11 +26,15 @@ Pet biological cycle prediction PWA. Predicts sleep, urination, and defecation t
 - Virtual sample size = 5 for cold-start priors
 - Anomaly detection via predictive surprise (rolling 7-day average)
 
-## Design Language: "Clinical Warmth"
-- Background: #0F0E0C (near-black warm)
-- Text: #F5F0E8 (warm off-white)
-- Sleep: #5B8A8A (muted teal)
-- Pee: #D4A843 (golden amber)
-- Poop: #8B6B4A (warm brown)
-- Accent: #E8A849 (amber)
-- Fonts: Instrument Serif (data), DM Sans (UI)
+## Design Language: "Warm Light"
+- Background: #fffaf4 → #f5ede5 gradient (warm cream)
+- Surface cards: white glass with warm tints, layered shadows
+- Text primary: #231c17, secondary: #65594f, muted: #8f8275
+- Sleep: #6e93a5 (steel blue)
+- Pee: #d9a44b (golden amber)
+- Poop: #916344 (warm brown)
+- Accent: #eb7d62 (coral)
+- Fonts: Instrument Serif (data/display), DM Sans (UI body)
+- Design system: surface-card, surface-card-hero, metric-card, eyebrow-pill, info-pill, filter-chip utility classes
+- Grain overlay + radial gradient atmosphere on body
+- Staggered entrance animations (fadeSlideUp with animation-delay)

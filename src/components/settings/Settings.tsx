@@ -1,5 +1,5 @@
-import React, { useState, memo } from 'react';
-import type { PetProfile, PetEvent } from '../../types';
+import React, { memo, useState } from 'react';
+import type { PetEvent, PetProfile } from '../../types';
 import { getAllEvents } from '../../store/db';
 import type { AppSettings } from '../../store/db';
 
@@ -10,14 +10,23 @@ interface SettingsProps {
   onResetData: () => void;
 }
 
-function SectionHeader({ title }: { title: string }) {
+function SectionIntro({
+  eyebrow,
+  title,
+  aside,
+}: {
+  eyebrow: string;
+  title: string;
+  aside?: string;
+}) {
   return (
-    <h2
-      className="text-xs font-semibold uppercase tracking-widest px-6 pb-2 pt-7"
-      style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
-    >
-      {title}
-    </h2>
+    <div className="section-head">
+      <div className="flex flex-col gap-1">
+        <div className="section-label">{eyebrow}</div>
+        <h2 className="section-title">{title}</h2>
+      </div>
+      {aside ? <div className="info-pill">{aside}</div> : null}
+    </div>
   );
 }
 
@@ -25,134 +34,136 @@ function SettingRow({
   label,
   description,
   children,
+  border = true,
 }: {
   label: string;
   description?: string;
   children: React.ReactNode;
+  border?: boolean;
 }) {
   return (
     <div
-      className="flex items-center justify-between gap-3 px-4 py-3"
-      style={{ borderBottom: '1px solid rgba(245,240,232,0.05)' }}
+      className="flex items-center justify-between gap-4 px-5 py-4"
+      style={{ borderBottom: border ? '1px solid rgba(127,100,76,0.08)' : 'none' }}
     >
-      <div className="flex flex-col flex-1">
-        <span className="text-sm" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}>
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <span className="text-[15px] font-semibold" style={{ color: 'var(--color-text-primary)' }}>
           {label}
         </span>
-        {description && (
-          <span className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)', marginTop: 2 }}>
+        {description ? (
+          <span className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
             {description}
           </span>
-        )}
+        ) : null}
       </div>
       {children}
     </div>
   );
 }
 
-function Toggle({ value, onChange, label }: { value: boolean; onChange: (v: boolean) => void; label: string }) {
+function Toggle({
+  value,
+  onChange,
+  label,
+}: {
+  value: boolean;
+  onChange: (value: boolean) => void;
+  label: string;
+}) {
   return (
     <button
       onClick={() => onChange(!value)}
       aria-pressed={value}
       aria-label={label}
-      className="rounded-full shrink-0 transition-all duration-200"
-      style={{
-        width: 48, height: 28,
-        background: value ? 'var(--color-accent)' : 'var(--color-surface)',
-        border: '1px solid rgba(245,240,232,0.12)',
-        position: 'relative',
-      }}
+      type="button"
+      className="toggle-switch btn-tactile shrink-0"
+      data-active={value}
     >
-      <span
-        className="absolute rounded-full transition-all duration-200"
-        style={{ width: 20, height: 20, background: 'white', top: 3, left: value ? 25 : 3 }}
-      />
+      <span className="toggle-thumb" />
     </button>
   );
 }
 
 function StatBadge({ label, value }: { label: string; value: string | number }) {
   return (
-    <div
-      className="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl"
-      style={{ background: 'var(--color-surface-overlay)' }}
-    >
-      <span
-        className="text-lg"
-        style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
-      >
-        {value}
-      </span>
-      <span className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
-        {label}
-      </span>
+    <div className="metric-card p-4">
+      <span className="metric-label">{label}</span>
+      <span className="metric-value text-[1.7rem]">{value}</span>
     </div>
   );
 }
 
 function PetProfileCard({ pet }: { pet: PetProfile }) {
   const ageYears = (pet.ageMonths / 12).toFixed(1);
-  const mealTimesFormatted = pet.mealTimes.map((h) => {
-    const hh = Math.floor(h);
-    const mm = Math.round((h - hh) * 60);
-    const ampm = hh < 12 ? 'AM' : 'PM';
-    const dh = hh === 0 ? 12 : hh > 12 ? hh - 12 : hh;
-    return `${dh}:${mm.toString().padStart(2, '0')} ${ampm}`;
-  }).join(', ');
+  const mealTimesFormatted = pet.mealTimes
+    .map((hour) => {
+      const hh = Math.floor(hour);
+      const mm = Math.round((hour - hh) * 60);
+      const ampm = hh < 12 ? 'AM' : 'PM';
+      const displayHour = hh === 0 ? 12 : hh > 12 ? hh - 12 : hh;
+      return `${displayHour}:${mm.toString().padStart(2, '0')} ${ampm}`;
+    })
+    .join(', ');
 
   return (
-    <div
-      className="mx-5 rounded-2xl overflow-hidden"
-      style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.06)' }}
-    >
-      <div
-        className="px-4 py-4 flex items-center gap-4"
-        style={{ borderBottom: '1px solid rgba(245,240,232,0.05)' }}
-      >
-        <div
-          className="flex items-center justify-center rounded-2xl shrink-0"
-          style={{ width: 56, height: 56, background: 'var(--color-surface-overlay)', fontSize: 28 }}
-        >
-          {pet.species === 'dog' ? '🐕' : '🐈'}
-        </div>
-        <div>
-          <div className="text-xl" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
-            {pet.name}
+    <section className="surface-card-hero overflow-hidden">
+      <div className="p-6">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div
+              className="icon-badge"
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: 22,
+                background: pet.species === 'dog' ? 'var(--color-pee-soft)' : 'var(--color-sleep-soft)',
+                fontSize: 32,
+              }}
+            >
+              {pet.species === 'dog' ? '🐕' : '🐈'}
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="page-title text-[2rem]">{pet.name}</div>
+              <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                {pet.breed}
+              </div>
+            </div>
           </div>
-          <div className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
-            {pet.breed}
-          </div>
+
+          <div className="info-pill capitalize">{pet.species}</div>
         </div>
-      </div>
 
-      <div className="grid grid-cols-3 gap-2 p-3">
-        <StatBadge label="Age" value={`${ageYears}y`} />
-        <StatBadge label="Weight" value={`${pet.weightKg}kg`} />
-        <StatBadge label="Meals" value={pet.mealTimes.length} />
-      </div>
+        <div className="mt-5 grid grid-cols-3 gap-3">
+          <StatBadge label="Age" value={`${ageYears}y`} />
+          <StatBadge label="Weight" value={`${pet.weightKg}kg`} />
+          <StatBadge label="Meals" value={pet.mealTimes.length} />
+        </div>
 
-      <div className="px-4 pb-3 flex flex-wrap gap-2">
-        {pet.neutered && (
-          <span className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: 'var(--color-surface-overlay)', color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
-            Neutered
+        <div className="mt-5 flex flex-wrap gap-2">
+          {pet.neutered ? (
+            <span className="info-pill" style={{ background: 'rgba(255,255,255,0.84)' }}>
+              Neutered
+            </span>
+          ) : null}
+          <span className="info-pill" style={{ background: 'rgba(255,255,255,0.84)' }}>
+            {pet.indoor ? 'Indoor' : 'Outdoor'}
           </span>
-        )}
-        <span className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: 'var(--color-surface-overlay)', color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
-          {pet.indoor ? 'Indoor' : 'Outdoor'}
-        </span>
-        <span className="text-[11px] px-2 py-0.5 rounded-full capitalize" style={{ background: 'var(--color-surface-overlay)', color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
-          {pet.dietType} food
-        </span>
+          <span className="info-pill capitalize" style={{ background: 'rgba(255,255,255,0.84)' }}>
+            {pet.dietType} food
+          </span>
+          <span className="info-pill capitalize" style={{ background: 'rgba(255,255,255,0.84)' }}>
+            {pet.sizeClass}
+          </span>
+        </div>
       </div>
 
-      <div
-        className="px-4 pb-3 text-xs"
-        style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
-      >
-        Meal times: {mealTimesFormatted}
+      <div className="border-t px-6 py-4" style={{ borderColor: 'rgba(127,100,76,0.08)' }}>
+        <div className="metric-label">Meal times</div>
+        <div className="mt-2 text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
+          {mealTimesFormatted}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -177,10 +188,10 @@ const Settings = memo(function Settings({
       };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `pawclock-${pet.name.toLowerCase()}-${new Date().toISOString().slice(0, 10)}.json`;
-      a.click();
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `pawclock-${pet.name.toLowerCase()}-${new Date().toISOString().slice(0, 10)}.json`;
+      anchor.click();
       URL.revokeObjectURL(url);
     } finally {
       setIsExporting(false);
@@ -188,211 +199,184 @@ const Settings = memo(function Settings({
   }
 
   return (
-    <div
-      className="flex flex-col pb-8"
-      style={{ minHeight: '100%' }}
-      role="main"
-      aria-label="Settings"
-    >
-      {/* Header */}
-      <div
-        className="px-6 pt-6 pb-2"
-        style={{ paddingTop: 'max(1.5rem, env(safe-area-inset-top))' }}
-      >
-        <h1
-          className="text-2xl"
-          style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
-        >
-          Settings
-        </h1>
-      </div>
-
-      {/* Pet profile */}
-      <SectionHeader title="Pet Profile" />
-      <PetProfileCard pet={pet} />
-
-      {/* Notifications */}
-      <SectionHeader title="Notifications" />
-      <div
-        className="mx-5 rounded-2xl overflow-hidden"
-        style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.06)' }}
-      >
-        <SettingRow label="Push Notifications" description="Get alerts before predicted bathroom events">
-          <Toggle
-            value={settings.notificationsEnabled}
-            onChange={(v) => onSettingsChange({ notificationsEnabled: v })}
-            label="Toggle push notifications"
-          />
-        </SettingRow>
-
-        {settings.notificationsEnabled && (
-          <div
-            className="px-4 py-3"
-            style={{ borderBottom: '1px solid rgba(245,240,232,0.05)' }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}>
-                Notify before
-              </span>
-              <span
-                className="text-base"
-                style={{ fontFamily: 'var(--font-display)', color: 'var(--color-accent)' }}
-              >
-                {settings.notifyMinutesBefore} min
-              </span>
-            </div>
-            <input
-              type="range"
-              min={5}
-              max={60}
-              step={5}
-              value={settings.notifyMinutesBefore}
-              onChange={(e) => onSettingsChange({ notifyMinutesBefore: Number(e.target.value) })}
-              className="w-full"
-              style={{ accentColor: 'var(--color-accent)' }}
-              aria-label={`Notify ${settings.notifyMinutesBefore} minutes before`}
-              aria-valuemin={5}
-              aria-valuemax={60}
-              aria-valuenow={settings.notifyMinutesBefore}
-            />
-            <div className="flex justify-between text-[10px] mt-1" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
-              <span>5 min</span>
-              <span>60 min</span>
-            </div>
+    <div className="page-scroll page-scroll--tight" role="main" aria-label="Settings">
+      <section className="surface-card-hero animate-entrance animate-entrance-1 p-6">
+        <div className="flex flex-col gap-3">
+          <div className="eyebrow-pill w-fit" style={{ color: 'var(--color-accent)' }}>
+            Preferences
           </div>
-        )}
-      </div>
+          <div className="flex flex-col gap-2">
+            <h1 className="page-title">
+              Product <em>settings</em>
+            </h1>
+            <p className="page-subtitle">
+              Tune notifications, review profile details, export your data, and keep the app running the way you want.
+            </p>
+          </div>
+        </div>
+      </section>
 
-      {/* Data */}
-      <SectionHeader title="Data" />
-      <div
-        className="mx-5 rounded-2xl overflow-hidden"
-        style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.06)' }}
-      >
-        <div className="px-4 py-3" style={{ borderBottom: '1px solid rgba(245,240,232,0.05)' }}>
+      <section className="section-stack animate-entrance animate-entrance-2">
+        <SectionIntro eyebrow="Pet profile" title="Current companion" />
+        <PetProfileCard pet={pet} />
+      </section>
+
+      <section className="section-stack animate-entrance animate-entrance-3">
+        <SectionIntro eyebrow="Notifications" title="Reminder behavior" />
+        <div className="surface-card overflow-hidden">
+          <SettingRow
+            label="Push notifications"
+            description="Get reminded before the next predicted bathroom window."
+            border={!settings.notificationsEnabled}
+          >
+            <Toggle
+              value={settings.notificationsEnabled}
+              onChange={(value) => onSettingsChange({ notificationsEnabled: value })}
+              label="Toggle push notifications"
+            />
+          </SettingRow>
+
+          {settings.notificationsEnabled ? (
+            <div className="px-5 py-4">
+              <div className="surface-card-inset p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex flex-col gap-1">
+                    <span className="metric-label">Notify before</span>
+                    <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                      Choose how much lead time feels useful.
+                    </span>
+                  </div>
+                  <div className="font-data text-[1.8rem]" style={{ color: 'var(--color-accent)' }}>
+                    {settings.notifyMinutesBefore}
+                  </div>
+                </div>
+
+                <input
+                  type="range"
+                  min={5}
+                  max={60}
+                  step={5}
+                  value={settings.notifyMinutesBefore}
+                  onChange={(e) => onSettingsChange({ notifyMinutesBefore: Number(e.target.value) })}
+                  className="mt-5 w-full"
+                  style={{ accentColor: 'var(--color-accent)' }}
+                  aria-label={`Notify ${settings.notifyMinutesBefore} minutes before`}
+                  aria-valuemin={5}
+                  aria-valuemax={60}
+                  aria-valuenow={settings.notifyMinutesBefore}
+                />
+
+                <div className="mt-2 flex justify-between text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                  <span>5 min</span>
+                  <span>60 min</span>
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </section>
+
+      <section className="section-stack animate-entrance animate-entrance-4">
+        <SectionIntro eyebrow="Data" title="Export and review" />
+        <div className="surface-card overflow-hidden">
           <button
             onClick={handleExport}
             disabled={isExporting}
-            className="w-full flex items-center gap-3 text-left"
-            style={{ minHeight: 44, opacity: isExporting ? 0.6 : 1 }}
+            type="button"
+            className="btn-tactile flex w-full items-center gap-4 px-5 py-5 text-left"
+            style={{ opacity: isExporting ? 0.7 : 1 }}
             aria-label="Export data as JSON"
           >
             <div
-              className="flex items-center justify-center rounded-xl"
-              style={{ width: 36, height: 36, background: 'var(--color-accent-dim)', color: 'var(--color-accent)', shrink: 0 } as React.CSSProperties}
+              className="icon-badge shrink-0"
+              style={{ background: 'var(--color-accent-dim)', color: 'var(--color-accent)' }}
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-                <path d="M9 3v9M5 8l4 4 4-4M3 14h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M9 3v9M5 8l4 4 4-4M3 14h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-medium" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}>
-                {isExporting ? 'Exporting...' : 'Export Data (JSON)'}
+
+            <div className="flex min-w-0 flex-1 flex-col gap-1">
+              <span className="text-[15px] font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                {isExporting ? 'Exporting data...' : 'Export all data as JSON'}
               </span>
-              <span className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
-                All logged events and pet profile
+              <span className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
+                Download your pet profile and every logged event in a single file.
               </span>
             </div>
           </button>
         </div>
-      </div>
+      </section>
 
-      {/* About */}
-      <SectionHeader title="About PawClock" />
-      <div
-        className="mx-5 rounded-2xl overflow-hidden"
-        style={{ background: 'var(--color-surface-raised)', border: '1px solid rgba(245,240,232,0.06)' }}
-      >
-        <div className="px-4 py-4 flex flex-col gap-1">
-          <div className="flex items-center justify-between">
-            <span className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>Version</span>
-            <span className="text-sm" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>0.1.0</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>Engine</span>
-            <span className="text-sm" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>Gamma-Dirichlet-Multinomial</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>Storage</span>
-            <span className="text-sm" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>Local IndexedDB only</span>
+      <section className="section-stack animate-entrance animate-entrance-5">
+        <SectionIntro eyebrow="About PawClock" title="What powers the predictions" aside="v0.1.0" />
+        <div className="surface-card overflow-hidden">
+          <SettingRow label="Prediction engine" description="Gamma-Dirichlet-Multinomial cycle modeling" border>
+            <div className="info-pill">Bayesian</div>
+          </SettingRow>
+          <SettingRow label="Storage" description="All data stays in local IndexedDB on this device" border>
+            <div className="info-pill">Private</div>
+          </SettingRow>
+          <SettingRow label="Guidance" description="Predictions improve as more events are logged" border={false}>
+            <div className="info-pill">Learns over time</div>
+          </SettingRow>
+          <div className="border-t px-5 py-4 text-sm leading-6" style={{ borderColor: 'rgba(127,100,76,0.08)', color: 'var(--color-text-secondary)' }}>
+            PawClock uses statistical patterns to estimate likely biological cycles. It is not a substitute for veterinary care or diagnosis.
           </div>
         </div>
-        <div
-          className="px-4 py-3 text-xs"
-          style={{
-            color: 'var(--color-text-muted)',
-            fontFamily: 'var(--font-body)',
-            borderTop: '1px solid rgba(245,240,232,0.05)',
-            lineHeight: 1.6,
-          }}
-        >
-          PawClock uses Bayesian statistical models to predict biological cycles. Predictions improve with more logged events. Not a substitute for veterinary advice.
-        </div>
-      </div>
+      </section>
 
-      {/* Danger zone */}
-      <SectionHeader title="Danger Zone" />
-      <div className="mx-5">
+      <section className="section-stack">
+        <SectionIntro eyebrow="Danger zone" title="Reset the local app state" />
         {!showResetConfirm ? (
           <button
             onClick={() => setShowResetConfirm(true)}
-            className="w-full rounded-2xl py-3 text-sm font-medium"
+            type="button"
+            className="ghost-button btn-tactile w-full"
             style={{
-              background: 'rgba(196,91,91,0.08)',
-              border: '1px solid rgba(196,91,91,0.2)',
               color: 'var(--color-danger)',
-              fontFamily: 'var(--font-body)',
-              minHeight: 52,
+              background: 'rgba(207,107,99,0.08)',
+              border: '1px solid rgba(207,107,99,0.18)',
             }}
             aria-label="Reset all data"
           >
-            Reset All Data
+            Reset all data
           </button>
         ) : (
           <div
-            className="rounded-2xl p-4 flex flex-col gap-3"
+            className="surface-card p-5"
             style={{
-              background: 'rgba(196,91,91,0.08)',
-              border: '1px solid rgba(196,91,91,0.3)',
+              background: 'linear-gradient(180deg, rgba(255,244,243,0.96), rgba(255,248,247,0.96))',
+              borderColor: 'rgba(207,107,99,0.22)',
             }}
           >
-            <p className="text-sm" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}>
-              This will permanently delete all events, the pet profile, and reset the prediction model. This cannot be undone.
+            <p className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
+              This permanently deletes all events, the pet profile, and the model state stored on this device. It cannot be undone.
             </p>
-            <div className="flex gap-3">
+            <div className="mt-4 flex gap-3">
               <button
                 onClick={() => setShowResetConfirm(false)}
-                className="flex-1 rounded-xl py-2 text-sm font-medium"
-                style={{
-                  background: 'var(--color-surface-raised)',
-                  color: 'var(--color-text-secondary)',
-                  fontFamily: 'var(--font-body)',
-                  minHeight: 44,
-                }}
+                type="button"
+                className="secondary-button btn-tactile flex-1"
                 aria-label="Cancel reset"
               >
                 Cancel
               </button>
               <button
-                onClick={() => { setShowResetConfirm(false); onResetData(); }}
-                className="flex-1 rounded-xl py-2 text-sm font-bold"
-                style={{
-                  background: 'var(--color-danger)',
-                  color: 'white',
-                  fontFamily: 'var(--font-body)',
-                  minHeight: 44,
+                onClick={() => {
+                  setShowResetConfirm(false);
+                  onResetData();
                 }}
+                type="button"
+                className="danger-button btn-tactile flex-1"
                 aria-label="Confirm data reset"
               >
-                Yes, Reset
+                Yes, reset
               </button>
             </div>
           </div>
         )}
-      </div>
-
-      {/* Bottom padding for nav */}
-      <div style={{ height: 100 }} />
+      </section>
     </div>
   );
 });

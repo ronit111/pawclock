@@ -48,61 +48,57 @@ const tabs: Array<{ id: NavTab; label: string; Icon: React.FC }> = [
 const BottomNav = memo(function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   return (
     <nav
-      className="sticky bottom-0 z-40 shrink-0"
+      className="sticky bottom-0 z-40 px-3 pt-2"
       style={{
-        paddingBottom: 'env(safe-area-inset-bottom)',
-        background: 'rgba(15, 14, 12, 0.92)',
-        backdropFilter: 'blur(20px) saturate(1.6)',
-        WebkitBackdropFilter: 'blur(20px) saturate(1.6)',
-        borderTop: '1px solid rgba(245, 240, 232, 0.06)',
+        paddingBottom: 'calc(env(safe-area-inset-bottom) + 10px)',
+        background: 'linear-gradient(180deg, rgba(245,237,229,0) 0%, rgba(245,237,229,0.78) 34%, rgba(245,237,229,0.96) 100%)',
       }}
       aria-label="Main navigation"
     >
-      <div className="flex items-stretch justify-around">
+      <div
+        className="mx-auto flex items-stretch gap-2 rounded-[30px] p-2"
+        style={{
+          background: 'rgba(255,255,255,0.86)',
+          border: '1px solid rgba(255,255,255,0.82)',
+          boxShadow: 'var(--shadow-lg)',
+          backdropFilter: 'blur(20px) saturate(1.1)',
+          WebkitBackdropFilter: 'blur(20px) saturate(1.1)',
+        }}
+      >
         {tabs.map(({ id, label, Icon }) => {
           const isActive = activeTab === id;
           return (
             <button
               key={id}
               onClick={() => onTabChange(id)}
+              type="button"
               aria-label={label}
               aria-current={isActive ? 'page' : undefined}
-              className="btn-tactile flex flex-col items-center justify-center gap-1 flex-1 py-3 relative"
+              className="btn-tactile flex min-h-[64px] flex-1 items-center justify-center rounded-[24px] px-3 py-3"
               style={{
+                background: isActive ? 'rgba(235,125,98,0.12)' : 'transparent',
                 color: isActive ? 'var(--color-accent)' : 'var(--color-text-muted)',
-                minHeight: '60px',
+                boxShadow: isActive ? 'var(--shadow-sm)' : 'none',
+                border: `1px solid ${isActive ? 'rgba(235,125,98,0.16)' : 'transparent'}`,
               }}
             >
-              {/* Active indicator dot */}
-              {isActive && (
-                <span
-                  className="absolute top-2 w-1 h-1 rounded-full"
+              <div className="flex flex-col items-center gap-1">
+                <div
+                  className="flex h-9 w-9 items-center justify-center rounded-full"
                   style={{
-                    background: 'var(--color-accent)',
-                    boxShadow: '0 0 8px var(--color-accent)',
+                    background: isActive ? 'rgba(255,255,255,0.9)' : 'transparent',
+                    transform: isActive ? 'translateY(-1px)' : 'none',
                   }}
-                />
-              )}
-              <span
-                style={{
-                  filter: isActive ? 'drop-shadow(0 0 8px var(--color-accent))' : 'none',
-                  transition: 'filter 250ms ease, transform 250ms ease',
-                  transform: isActive ? 'scale(1.1)' : 'scale(1)',
-                }}
-              >
-                <Icon />
-              </span>
-              <span
-                className="text-[10px] font-medium"
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  opacity: isActive ? 1 : 0.5,
-                  letterSpacing: isActive ? '0.06em' : '0.03em',
-                  transition: 'all 250ms ease',
-                }}
-              >
-                {label}
-              </span>
+                >
+                  <Icon />
+                </div>
+                <span
+                  className="text-[11px] font-semibold uppercase tracking-[0.12em]"
+                  style={{ opacity: isActive ? 1 : 0.86 }}
+                >
+                  {label}
+                </span>
+              </div>
             </button>
           );
         })}

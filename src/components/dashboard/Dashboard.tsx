@@ -1,5 +1,5 @@
-import { useState, useMemo, memo } from 'react';
-import type { PetProfile, PetPrediction, PetEvent, EventType } from '../../types';
+import { memo, useMemo, useState } from 'react';
+import type { EventType, PetEvent, PetPrediction, PetProfile } from '../../types';
 import Timeline from './Timeline';
 import NextEventCard from './NextEventCard';
 import ConfidenceIndicator from '../shared/ConfidenceIndicator';
@@ -12,29 +12,32 @@ interface DashboardProps {
 
 type FilterType = 'sleep_start' | 'pee' | 'poop';
 
-const FILTER_CONFIG: Array<{ type: FilterType; label: string; color: string }> = [
-  { type: 'sleep_start', label: 'Sleep', color: 'var(--color-sleep)' },
-  { type: 'pee', label: 'Pee', color: 'var(--color-pee)' },
-  { type: 'poop', label: 'Poop', color: 'var(--color-poop)' },
+const FILTER_CONFIG: Array<{ type: FilterType; label: string; color: string; tint: string }> = [
+  { type: 'sleep_start', label: 'Sleep', color: 'var(--color-sleep)', tint: 'var(--color-sleep-soft)' },
+  { type: 'pee', label: 'Pee', color: 'var(--color-pee)', tint: 'var(--color-pee-soft)' },
+  { type: 'poop', label: 'Poop', color: 'var(--color-poop)', tint: 'var(--color-poop-soft)' },
 ];
 
 function formatCurrentTime(date: Date): string {
-  const day = date.toLocaleDateString('en-US', { weekday: 'short' });
-  const dateStr = date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+  const day = date.toLocaleDateString('en-US', { weekday: 'long' });
+  const dateStr = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
   const time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-  return `${day}, ${dateStr} · ${time}`;
+  return `${day}, ${dateStr} at ${time}`;
+}
+
+function formatShortTime(ts: number): string {
+  return new Date(ts).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 }
 
 function getCurrentStatus(prediction: PetPrediction): string {
-  // Determine if pet is likely sleeping based on sleep_start windows
   const now = Date.now();
   const sleepWindows = prediction.sleepStart.windows;
-  for (const w of sleepWindows) {
-    if (now >= w.startTime - 15 * 60_000 && now <= w.endTime + 15 * 60_000) {
-      return 'likely napping';
+  for (const window of sleepWindows) {
+    if (now >= window.startTime - 15 * 60_000 && now <= window.endTime + 15 * 60_000) {
+      return 'Likely resting';
     }
   }
-  return 'likely awake';
+  return 'Likely awake';
 }
 
 function getMostUrgentPrediction(prediction: PetPrediction) {
@@ -42,7 +45,8 @@ function getMostUrgentPrediction(prediction: PetPrediction) {
   const candidates = [
     { type: 'pee' as EventType, window: prediction.pee.nextEventEstimate.window80 },
     { type: 'poop' as EventType, window: prediction.poop.nextEventEstimate.window80 },
-  ].filter((c) => c.window.peakTime > now);
+    { type: 'sleep_start' as EventType, window: prediction.sleepStart.nextEventEstimate.window80 },
+  ].filter((candidate) => candidate.window.peakTime > now);
 
   candidates.sort((a, b) => a.window.peakTime - b.window.peakTime);
   return candidates[0] ?? null;
@@ -50,25 +54,35 @@ function getMostUrgentPrediction(prediction: PetPrediction) {
 
 function formatCountdown(ts: number): string {
   const diff = ts - Date.now();
-  if (diff < 0) return 'now';
+  if (diff < 0) return 'Happening now';
   const min = Math.round(diff / 60_000);
-  if (min < 60) return `~${min} min`;
-  const h = Math.floor(min / 60);
-  const m = min % 60;
-  return m > 0 ? `~${h}h ${m}m` : `~${h}h`;
+  if (min < 60) return `About ${min} min`;
+  const hours = Math.floor(min / 60);
+  const minutes = min % 60;
+  return minutes > 0 ? `About ${hours}h ${minutes}m` : `About ${hours}h`;
 }
 
 function getUrgentLabel(type: EventType): string {
-  if (type === 'pee') return 'Pee';
-  if (type === 'poop') return 'Poop';
-  if (type === 'sleep_start') return 'Sleep';
-  return 'Wake';
+  if (type === 'pee') return 'Bathroom break';
+  if (type === 'poop') return 'Digestive window';
+  if (type === 'sleep_start') return 'Next nap window';
+  return 'Wake window';
 }
 
 function getUrgentColor(type: EventType): string {
   if (type === 'pee') return 'var(--color-pee)';
   if (type === 'poop') return 'var(--color-poop)';
   return 'var(--color-sleep)';
+}
+
+function getUrgentTint(type: EventType): string {
+  if (type === 'pee') return 'var(--color-pee-soft)';
+  if (type === 'poop') return 'var(--color-poop-soft)';
+  return 'var(--color-sleep-soft)';
+}
+
+function speciesBadge(species: PetProfile['species']): string {
+  return species === 'dog' ? 'Dog profile' : 'Cat profile';
 }
 
 const Dashboard = memo(function Dashboard({ pet, prediction, events }: DashboardProps) {
@@ -80,7 +94,6 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
   function toggleType(type: FilterType) {
     setVisibleTypes((prev) => {
       const next = new Set(prev);
-      // Sleep toggle controls both sleep_start and sleep_end
       if (type === 'sleep_start') {
         if (next.has('sleep_start')) {
           next.delete('sleep_start');
@@ -89,9 +102,10 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
           next.add('sleep_start');
           next.add('sleep_end');
         }
+      } else if (next.has(type)) {
+        next.delete(type);
       } else {
-        if (next.has(type)) next.delete(type);
-        else next.add(type);
+        next.add(type);
       }
       return next;
     });
@@ -106,140 +120,193 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
       prediction.sleepStart.modelConfidence) /
     3;
 
+  const todayStart = useMemo(() => {
+    const date = new Date(now);
+    date.setHours(0, 0, 0, 0);
+    return date.getTime();
+  }, [now]);
+
+  const todayLogged = useMemo(
+    () => events.filter((event) => event.timestamp >= todayStart).length,
+    [events, todayStart],
+  );
+
+  const lastLoggedEvent = useMemo(
+    () => events.reduce<PetEvent | null>((latest, event) => {
+      if (!latest || event.timestamp > latest.timestamp) return event;
+      return latest;
+    }, null),
+    [events],
+  );
+
+  const latestUpdateLabel = lastLoggedEvent
+    ? `${lastLoggedEvent.type === 'sleep_start' ? 'Sleep' : lastLoggedEvent.type === 'sleep_end' ? 'Wake' : lastLoggedEvent.type === 'pee' ? 'Pee' : 'Poop'} logged ${formatShortTime(lastLoggedEvent.timestamp)}`
+    : 'Start logging to personalize predictions';
+
   return (
-    <div
-      className="flex flex-col gap-4 px-5 pt-5 pb-2"
-      style={{ minHeight: '100%' }}
-    >
-      {/* Header */}
-      <header className="flex items-start justify-between animate-entrance animate-entrance-1">
-        <div>
-          <h1
-            className="text-3xl leading-tight"
-            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)', letterSpacing: '-0.01em' }}
-          >
-            {pet.name}
-          </h1>
-          <p
-            className="text-xs mt-0.5"
-            style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)', letterSpacing: '0.04em' }}
-          >
-            {currentTimeStr}
-          </p>
-        </div>
-        <div className="flex flex-col items-end gap-1.5 pt-1">
+    <div className="page-scroll">
+      <section className="surface-card-hero ambient-glow animate-entrance animate-entrance-1 p-6">
+        <div className="flex flex-col gap-6">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex min-w-0 flex-col gap-3">
+              <div className="eyebrow-pill w-fit" style={{ color: 'var(--color-accent)' }}>
+                Daily prediction
+              </div>
+              <div className="flex flex-col gap-2">
+                <h1 className="page-title">
+                  {pet.name}&apos;s <em>day</em>
+                </h1>
+                <p className="page-subtitle">
+                  {status}. {currentTimeStr}.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-end gap-3">
+              <div className="info-pill" style={{ color: 'var(--color-text-primary)' }}>
+                <span>{pet.species === 'dog' ? '🐕' : '🐈'}</span>
+                <span>{speciesBadge(pet.species)}</span>
+              </div>
+              <ConfidenceIndicator confidence={avgConfidence} size="sm" />
+            </div>
+          </div>
+
           <div
-            className="text-[11px] font-medium px-2.5 py-1 rounded-full"
+            className="surface-card-inset p-5"
+            aria-live="polite"
+            aria-label="Most urgent upcoming event"
             style={{
-              background: 'var(--color-surface-overlay)',
-              color: 'var(--color-text-secondary)',
-              fontFamily: 'var(--font-body)',
-              letterSpacing: '0.02em',
-              border: '1px solid rgba(245,240,232,0.04)',
+              background: urgent
+                ? `linear-gradient(180deg, ${getUrgentTint(urgent.type)} 0%, rgba(255,255,255,0.96) 100%)`
+                : undefined,
             }}
           >
-            {pet.name} is {status}
-          </div>
-          <ConfidenceIndicator confidence={avgConfidence} size="sm" />
-        </div>
-      </header>
+            {urgent ? (
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div
+                    className="eyebrow-pill"
+                    style={{
+                      color: getUrgentColor(urgent.type),
+                      background: 'rgba(255,255,255,0.78)',
+                    }}
+                  >
+                    Up next
+                  </div>
+                  <div
+                    className="info-pill"
+                    style={{
+                      color: getUrgentColor(urgent.type),
+                      background: 'rgba(255,255,255,0.82)',
+                    }}
+                  >
+                    {Math.round(urgent.window.confidence * 100)}% likely
+                  </div>
+                </div>
 
-      {/* Next event hero card — the centerpiece */}
-      {urgent && (
-        <div
-          className="ambient-glow rounded-2xl p-5 animate-entrance animate-entrance-2"
-          style={{
-            '--glow-color': `${getUrgentColor(urgent.type)}15`,
-            background: `linear-gradient(145deg, ${getUrgentColor(urgent.type)}0A 0%, var(--color-surface-raised) 50%)`,
-            border: `1px solid ${getUrgentColor(urgent.type)}20`,
-          } as React.CSSProperties}
-          aria-live="polite"
-          aria-label="Most urgent upcoming event"
-        >
+                <div className="flex flex-col gap-2">
+                  <div className="text-[1.8rem] leading-[1.05] font-data" style={{ color: 'var(--color-text-primary)' }}>
+                    {getUrgentLabel(urgent.type)} in {formatCountdown(urgent.window.peakTime)}
+                  </div>
+                  <div className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
+                    Best window: {formatShortTime(urgent.window.startTime)} to {formatShortTime(urgent.window.endTime)}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                <div className="eyebrow-pill w-fit" style={{ color: 'var(--color-text-muted)' }}>
+                  Up next
+                </div>
+                <div className="text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                  Predictions are still warming up.
+                </div>
+                <div className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
+                  Add a few recent events and this dashboard will start surfacing stronger timing windows.
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div className="metric-card">
+              <span className="metric-label">Logged today</span>
+              <span className="metric-value">{todayLogged}</span>
+              <span className="metric-caption">events tracked</span>
+            </div>
+            <div className="metric-card">
+              <span className="metric-label">Model</span>
+              <span className="metric-value">{Math.round(avgConfidence * 100)}%</span>
+              <span className="metric-caption">confidence</span>
+            </div>
+            <div className="metric-card">
+              <span className="metric-label">Latest</span>
+              <span className="metric-value text-[1.45rem]">{lastLoggedEvent ? formatShortTime(lastLoggedEvent.timestamp) : '--'}</span>
+              <span className="metric-caption">last event</span>
+            </div>
+          </div>
+
           <div
-            className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-2"
-            style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
+            className="surface-card-soft rounded-[20px] px-4 py-3 text-sm"
+            style={{ color: 'var(--color-text-secondary)' }}
           >
-            Up next
-          </div>
-          <div className="flex items-end justify-between gap-3">
-            <span
-              className="text-[1.7rem] leading-tight"
-              style={{
-                fontFamily: 'var(--font-display)',
-                color: getUrgentColor(urgent.type),
-                letterSpacing: '-0.01em',
-              }}
-            >
-              {getUrgentLabel(urgent.type)} likely in{' '}
-              {formatCountdown(urgent.window.peakTime)}
-            </span>
-            <span
-              className="text-sm font-medium shrink-0 px-2.5 py-1 rounded-full"
-              style={{
-                background: `${getUrgentColor(urgent.type)}12`,
-                color: getUrgentColor(urgent.type),
-                fontFamily: 'var(--font-display)',
-                border: `1px solid ${getUrgentColor(urgent.type)}15`,
-              }}
-            >
-              ~{Math.round(urgent.window.confidence * 100)}%
-            </span>
+            {latestUpdateLabel}
           </div>
         </div>
-      )}
+      </section>
 
-      {/* Event type filter pills */}
-      <div className="flex gap-2 animate-entrance animate-entrance-3" role="group" aria-label="Filter event types">
-        {FILTER_CONFIG.map(({ type, label, color }) => {
-          const active = visibleTypes.has(type);
-          return (
-            <button
-              key={type}
-              onClick={() => toggleType(type)}
-              aria-pressed={active}
-              className="btn-tactile flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
-              style={{
-                background: active ? `${color}18` : 'var(--color-surface-raised)',
-                color: active ? color : 'var(--color-text-muted)',
-                border: `1px solid ${active ? color + '30' : 'rgba(245,240,232,0.05)'}`,
-                fontFamily: 'var(--font-body)',
-                minHeight: 32,
-                letterSpacing: '0.03em',
-              }}
-            >
-              <span
-                className="w-1.5 h-1.5 rounded-full inline-block"
+      <section className="section-stack animate-entrance animate-entrance-2">
+        <div className="section-head">
+          <div className="flex flex-col gap-1">
+            <div className="section-label">Timeline</div>
+            <h2 className="section-title">24-hour rhythm view</h2>
+          </div>
+          <div className="info-pill">Live layers</div>
+        </div>
+
+        <div className="hide-scrollbar flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Filter event types">
+          {FILTER_CONFIG.map(({ type, label, color, tint }) => {
+            const active = visibleTypes.has(type);
+            return (
+              <button
+                key={type}
+                onClick={() => toggleType(type)}
+                aria-pressed={active}
+                type="button"
+                className={`filter-chip btn-tactile shrink-0 ${active ? 'active' : ''}`}
                 style={{
-                  background: active ? color : 'var(--color-text-muted)',
-                  boxShadow: active ? `0 0 6px ${color}60` : 'none',
+                  color: active ? color : 'var(--color-text-secondary)',
+                  background: active ? tint : 'rgba(255,255,255,0.7)',
+                  borderColor: active ? `${color}30` : 'rgba(127,100,76,0.12)',
                 }}
-              />
-              {label}
-            </button>
-          );
-        })}
-      </div>
+              >
+                <span
+                  className="inline-block h-2 w-2 rounded-full"
+                  style={{ background: color, boxShadow: active ? `0 0 0 4px ${tint}` : 'none' }}
+                />
+                {label}
+              </button>
+            );
+          })}
+        </div>
 
-      {/* Timeline visualization */}
-      <div className="animate-entrance animate-entrance-4">
         <Timeline
           prediction={prediction}
           events={events}
           visibleTypes={visibleTypes}
           currentTime={now}
         />
-      </div>
+      </section>
 
-      {/* Next event cards */}
-      <section className="animate-entrance animate-entrance-5" aria-label="Upcoming events">
-        <h2
-          className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-2"
-          style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
-        >
-          Predicted Windows
-        </h2>
-        <div className="flex flex-col gap-2">
+      <section className="section-stack animate-entrance animate-entrance-3" aria-label="Upcoming events">
+        <div className="section-head">
+          <div className="flex flex-col gap-1">
+            <div className="section-label">Predicted windows</div>
+            <h2 className="section-title">What the next few hours look like</h2>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3">
           <NextEventCard
             eventType="pee"
             window={prediction.pee.nextEventEstimate.window80}
@@ -253,12 +320,10 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
           <NextEventCard
             eventType="sleep_start"
             window={prediction.sleepStart.nextEventEstimate.window80}
+            isPrimary={urgent?.type === 'sleep_start'}
           />
         </div>
       </section>
-
-      {/* Bottom padding for nav + quick log panel */}
-      <div style={{ height: 140 }} />
     </div>
   );
 });
