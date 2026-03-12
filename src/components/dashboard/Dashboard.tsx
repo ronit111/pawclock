@@ -137,6 +137,7 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
 
   return (
     <div className="page-scroll">
+      {/* ── Hero: title + prediction + metrics ── */}
       <section className="surface-card-hero animate-entrance animate-entrance-1 p-5">
         <div className="flex flex-col gap-4">
           <div className="flex items-start justify-between gap-3">
@@ -151,129 +152,132 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
             <ConfidenceIndicator confidence={avgConfidence} size="sm" />
           </div>
 
-          <div className="grid gap-3 md:grid-cols-[1fr_auto]">
-            <div
-              className="surface-card-inset p-4"
-              aria-live="polite"
-              aria-label="Most urgent upcoming event"
-              style={{
-                background: urgent
-                  ? `linear-gradient(180deg, ${getUrgentTint(urgent.type)} 0%, rgba(255,255,255,0.96) 100%)`
-                  : undefined,
-              }}
-            >
-              {urgent ? (
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: getUrgentColor(urgent.type) }}>
-                      Up next
-                    </span>
-                    <span className="text-xs font-semibold" style={{ color: getUrgentColor(urgent.type) }}>
-                      {Math.round(urgent.window.confidence * 100)}% likely
-                    </span>
-                  </div>
-                  <div className="text-[1.6rem] leading-tight font-data" style={{ color: 'var(--color-text-primary)' }}>
-                    {getUrgentLabel(urgent.type)} in {formatCountdown(urgent.window.peakTime)}
-                  </div>
-                  <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                    {formatShortTime(urgent.window.startTime)} - {formatShortTime(urgent.window.endTime)}
-                  </div>
+          <div
+            className="surface-card-inset p-4"
+            aria-live="polite"
+            aria-label="Most urgent upcoming event"
+            style={{
+              background: urgent
+                ? `linear-gradient(180deg, ${getUrgentTint(urgent.type)} 0%, rgba(255,255,255,0.96) 100%)`
+                : undefined,
+            }}
+          >
+            {urgent ? (
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: getUrgentColor(urgent.type) }}>
+                    Up next
+                  </span>
+                  <span className="text-xs font-semibold" style={{ color: getUrgentColor(urgent.type) }}>
+                    {Math.round(urgent.window.confidence * 100)}% likely
+                  </span>
                 </div>
-              ) : (
-                <div className="flex flex-col gap-1">
-                  <div className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                    Predictions warming up
-                  </div>
-                  <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                    Log a few events and timing windows will appear here.
-                  </div>
+                <div className="text-[1.6rem] leading-tight font-data" style={{ color: 'var(--color-text-primary)' }}>
+                  {getUrgentLabel(urgent.type)} in {formatCountdown(urgent.window.peakTime)}
                 </div>
-              )}
-            </div>
+                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                  {formatShortTime(urgent.window.startTime)} - {formatShortTime(urgent.window.endTime)}
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-1">
+                <div className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                  Predictions warming up
+                </div>
+                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                  Log a few events and timing windows will appear here.
+                </div>
+              </div>
+            )}
+          </div>
 
-            <div className="grid grid-cols-3 gap-2 md:grid-cols-1 md:gap-1.5">
-              <div className="metric-card md:py-2.5 md:px-3.5">
-                <span className="metric-label">Today</span>
-                <span className="metric-value md:text-[1.6rem]">{todayLogged}</span>
-                <span className="metric-caption">events</span>
-              </div>
-              <div className="metric-card md:py-2.5 md:px-3.5">
-                <span className="metric-label">Model</span>
-                <span className="metric-value md:text-[1.6rem]">{Math.round(avgConfidence * 100)}%</span>
-                <span className="metric-caption">confidence</span>
-              </div>
-              <div className="metric-card md:py-2.5 md:px-3.5">
-                <span className="metric-label">Latest</span>
-                <span className="metric-value text-[1.4rem] md:text-[1.3rem]">{lastLoggedEvent ? formatShortTime(lastLoggedEvent.timestamp) : '--'}</span>
-                <span className="metric-caption">last event</span>
-              </div>
+          <div className="grid grid-cols-3 gap-2">
+            <div className="metric-card">
+              <span className="metric-label">Today</span>
+              <span className="metric-value">{todayLogged}</span>
+              <span className="metric-caption">events</span>
+            </div>
+            <div className="metric-card">
+              <span className="metric-label">Model</span>
+              <span className="metric-value">{Math.round(avgConfidence * 100)}%</span>
+              <span className="metric-caption">confidence</span>
+            </div>
+            <div className="metric-card">
+              <span className="metric-label">Latest</span>
+              <span className="metric-value text-[1.4rem]">{lastLoggedEvent ? formatShortTime(lastLoggedEvent.timestamp) : '--'}</span>
+              <span className="metric-caption">last event</span>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="section-stack animate-entrance animate-entrance-2">
-        <div className="section-head">
-          <h2 className="section-title">24h timeline</h2>
-        </div>
+      {/* ── Desktop: two-column grid (timeline left, predictions right) ── */}
+      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[1fr_300px] lg:items-start lg:gap-5">
+        {/* Timeline */}
+        <section className="section-stack animate-entrance animate-entrance-2">
+          <div className="section-head">
+            <h2 className="section-title">24h timeline</h2>
+          </div>
 
-        <div className="hide-scrollbar flex gap-2 overflow-x-auto" role="group" aria-label="Filter event types">
-          {FILTER_CONFIG.map(({ type, label, color, tint }) => {
-            const active = visibleTypes.has(type);
-            return (
-              <button
-                key={type}
-                onClick={() => toggleType(type)}
-                aria-pressed={active}
-                type="button"
-                className={`filter-chip btn-tactile shrink-0 ${active ? 'active' : ''}`}
-                style={{
-                  color: active ? color : 'var(--color-text-secondary)',
-                  background: active ? tint : 'rgba(255,255,255,0.7)',
-                  borderColor: active ? `${color}30` : 'rgba(127,100,76,0.12)',
-                }}
-              >
-                <span
-                  className="inline-block h-2 w-2 rounded-full"
-                  style={{ background: color, boxShadow: active ? `0 0 0 4px ${tint}` : 'none' }}
-                />
-                {label}
-              </button>
-            );
-          })}
-        </div>
+          <div className="hide-scrollbar flex gap-2 overflow-x-auto" role="group" aria-label="Filter event types">
+            {FILTER_CONFIG.map(({ type, label, color, tint }) => {
+              const active = visibleTypes.has(type);
+              return (
+                <button
+                  key={type}
+                  onClick={() => toggleType(type)}
+                  aria-pressed={active}
+                  type="button"
+                  className={`filter-chip btn-tactile shrink-0 ${active ? 'active' : ''}`}
+                  style={{
+                    color: active ? color : 'var(--color-text-secondary)',
+                    background: active ? tint : 'rgba(255,255,255,0.7)',
+                    borderColor: active ? `${color}30` : 'rgba(127,100,76,0.12)',
+                  }}
+                >
+                  <span
+                    className="inline-block h-2 w-2 rounded-full"
+                    style={{ background: color, boxShadow: active ? `0 0 0 4px ${tint}` : 'none' }}
+                  />
+                  {label}
+                </button>
+              );
+            })}
+          </div>
 
-        <Timeline
-          prediction={prediction}
-          events={events}
-          visibleTypes={visibleTypes}
-          currentTime={now}
-        />
-      </section>
-
-      <section className="section-stack animate-entrance animate-entrance-3" aria-label="Upcoming events">
-        <div className="section-head">
-          <h2 className="section-title">Predicted windows</h2>
-        </div>
-
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
-          <NextEventCard
-            eventType="pee"
-            window={prediction.pee.nextEventEstimate.window80}
-            isPrimary={urgent?.type === 'pee'}
+          <Timeline
+            prediction={prediction}
+            events={events}
+            visibleTypes={visibleTypes}
+            currentTime={now}
           />
-          <NextEventCard
-            eventType="poop"
-            window={prediction.poop.nextEventEstimate.window80}
-            isPrimary={urgent?.type === 'poop'}
-          />
-          <NextEventCard
-            eventType="sleep_start"
-            window={prediction.sleepStart.nextEventEstimate.window80}
-            isPrimary={urgent?.type === 'sleep_start'}
-          />
-        </div>
-      </section>
+        </section>
+
+        {/* Predicted windows — sidebar on desktop, stacked on mobile */}
+        <section className="section-stack animate-entrance animate-entrance-3" aria-label="Upcoming events">
+          <div className="section-head">
+            <h2 className="section-title">Predicted windows</h2>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <NextEventCard
+              eventType="pee"
+              window={prediction.pee.nextEventEstimate.window80}
+              isPrimary={urgent?.type === 'pee'}
+            />
+            <NextEventCard
+              eventType="poop"
+              window={prediction.poop.nextEventEstimate.window80}
+              isPrimary={urgent?.type === 'poop'}
+            />
+            <NextEventCard
+              eventType="sleep_start"
+              window={prediction.sleepStart.nextEventEstimate.window80}
+              isPrimary={urgent?.type === 'sleep_start'}
+            />
+          </div>
+        </section>
+      </div>
     </div>
   );
 });

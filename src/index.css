@@ -322,7 +322,7 @@ textarea::placeholder {
 .metric-card {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   padding: 14px 16px;
   border-radius: 20px;
   background:
