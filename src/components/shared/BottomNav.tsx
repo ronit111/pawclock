@@ -57,7 +57,7 @@ const BottomNav = memo(function BottomNav({ activeTab, onTabChange }: BottomNavP
       }}
       aria-label="Main navigation"
     >
-      <div className="mx-auto flex max-w-[860px] items-stretch border-t px-4 py-1" style={{ borderColor: 'rgba(127,100,76,0.08)' }}>
+      <div className="mx-auto flex max-w-[1000px] items-stretch border-t px-6 py-1" style={{ borderColor: 'rgba(127,100,76,0.08)' }}>
         {tabs.map(({ id, label, Icon }) => {
           const isActive = activeTab === id;
           return (

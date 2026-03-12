@@ -304,26 +304,10 @@ const Timeline = memo(function Timeline({
         </div>
       </div>
 
-      <div className="flex gap-2 px-4 py-3">
-        {LANES.map((lane) => (
-          <div
-            key={lane.type}
-            className="flex-1 rounded-full px-3 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.14em]"
-            style={{
-              background: visibleTypes.has(lane.type) ? lane.tint : 'rgba(255,255,255,0.6)',
-              color: visibleTypes.has(lane.type) ? lane.cssColor : 'var(--color-text-muted)',
-              opacity: visibleTypes.has(lane.type) ? 1 : 0.7,
-            }}
-          >
-            {lane.label}
-          </div>
-        ))}
-      </div>
-
       <div
         ref={scrollRef}
-        className="hide-scrollbar overflow-y-auto px-2 pb-2"
-        style={{ height: 430, WebkitOverflowScrolling: 'touch' as never }}
+        className="hide-scrollbar timeline-scroll overflow-y-auto px-2 pb-2"
+        style={{ WebkitOverflowScrolling: 'touch' as never }}
         role="img"
         aria-label="24-hour probability timeline"
       >

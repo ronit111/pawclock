@@ -185,46 +185,45 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
   ];
 
   return (
-    <div
-      className="flex min-h-full flex-col gap-4 px-4 pb-6"
-      style={{ paddingTop: 'calc(env(safe-area-inset-top) + 20px)' }}
-    >
-      <div className="surface-card-hero p-5 animate-entrance animate-entrance-1">
-        <div className="flex flex-col gap-4">
-          <h1 className="page-title">
-            Pet care that feels <em>one step ahead</em>.
-          </h1>
-          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-            Learn your pet&apos;s natural bathroom and sleep rhythms, then turn those patterns into calm, confident daily care.
-          </p>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-2 animate-entrance animate-entrance-2">
-        {features.map((feature) => (
-          <div
-            key={feature.title}
-            className="surface-card-soft flex items-start gap-3 px-4 py-3"
-          >
-            <div className="icon-badge shrink-0" style={{ background: feature.color, color: feature.iconColor }}>
-              {feature.icon}
-            </div>
-            <div className="flex flex-col">
-              <div className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                {feature.title}
-              </div>
-              <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                {feature.text}
-              </div>
-            </div>
+    <div className="flex min-h-full flex-1 items-center justify-center px-4 py-8">
+      <div className="flex w-full max-w-[640px] flex-col gap-6">
+        <div className="animate-entrance animate-entrance-1">
+          <div className="flex flex-col gap-3">
+            <h1 className="page-title" style={{ fontSize: 'clamp(2.2rem, 5vw, 3rem)' }}>
+              Pet care that feels <em>one step ahead</em>.
+            </h1>
+            <p className="text-base leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
+              Learn your pet&apos;s natural bathroom and sleep rhythms, then turn those patterns into calm, confident daily care.
+            </p>
           </div>
-        ))}
-      </div>
+        </div>
 
-      <div className="mt-auto animate-entrance animate-entrance-3">
-        <button onClick={onNext} className="primary-button btn-tactile w-full" aria-label="Get started" type="button">
-          Get started
-        </button>
+        <div className="flex flex-col gap-2 animate-entrance animate-entrance-2">
+          {features.map((feature) => (
+            <div
+              key={feature.title}
+              className="surface-card-soft flex items-start gap-3 px-4 py-3"
+            >
+              <div className="icon-badge shrink-0" style={{ background: feature.color, color: feature.iconColor }}>
+                {feature.icon}
+              </div>
+              <div className="flex flex-col">
+                <div className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                  {feature.title}
+                </div>
+                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                  {feature.text}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="animate-entrance animate-entrance-3">
+          <button onClick={onNext} className="primary-button btn-tactile w-full" aria-label="Get started" type="button">
+            Get started
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -838,8 +837,8 @@ const Onboarding = memo(function Onboarding({ onComplete }: OnboardingProps) {
     <div className="flex min-h-dvh flex-col" style={{ background: 'transparent' }}>
       {showProgress && (
         <div
-          className="shrink-0 px-4 pb-2 pt-3"
-          style={{ paddingTop: 'calc(env(safe-area-inset-top) + 12px)' }}
+          className="mx-auto w-full shrink-0 px-4 pb-2 pt-3"
+          style={{ paddingTop: 'calc(env(safe-area-inset-top) + 12px)', maxWidth: 720 }}
         >
           <div className="flex items-center gap-3 px-1 py-2">
             {step > 1 ? (
@@ -887,12 +886,14 @@ const Onboarding = memo(function Onboarding({ onComplete }: OnboardingProps) {
         </div>
       )}
 
-      <div className="flex-1 overflow-y-auto hide-scrollbar">{stepContent[step]}</div>
+      <div className="mx-auto w-full flex-1 overflow-y-auto hide-scrollbar" style={{ maxWidth: 720 }}>
+        {stepContent[step]}
+      </div>
 
       {(showNext || showName) && (
         <div
-          className="shrink-0 px-4 pb-4 pt-2"
-          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)' }}
+          className="mx-auto w-full shrink-0 px-4 pb-4 pt-2"
+          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)', maxWidth: 720 }}
         >
           <button
             onClick={() => setStep((current) => current + 1)}

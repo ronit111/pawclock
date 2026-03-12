@@ -151,60 +151,62 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
             <ConfidenceIndicator confidence={avgConfidence} size="sm" />
           </div>
 
-          <div
-            className="surface-card-inset p-4"
-            aria-live="polite"
-            aria-label="Most urgent upcoming event"
-            style={{
-              background: urgent
-                ? `linear-gradient(180deg, ${getUrgentTint(urgent.type)} 0%, rgba(255,255,255,0.96) 100%)`
-                : undefined,
-            }}
-          >
-            {urgent ? (
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: getUrgentColor(urgent.type) }}>
-                    Up next
-                  </span>
-                  <span className="text-xs font-semibold" style={{ color: getUrgentColor(urgent.type) }}>
-                    {Math.round(urgent.window.confidence * 100)}% likely
-                  </span>
+          <div className="grid gap-3 md:grid-cols-[1fr_auto]">
+            <div
+              className="surface-card-inset p-4"
+              aria-live="polite"
+              aria-label="Most urgent upcoming event"
+              style={{
+                background: urgent
+                  ? `linear-gradient(180deg, ${getUrgentTint(urgent.type)} 0%, rgba(255,255,255,0.96) 100%)`
+                  : undefined,
+              }}
+            >
+              {urgent ? (
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: getUrgentColor(urgent.type) }}>
+                      Up next
+                    </span>
+                    <span className="text-xs font-semibold" style={{ color: getUrgentColor(urgent.type) }}>
+                      {Math.round(urgent.window.confidence * 100)}% likely
+                    </span>
+                  </div>
+                  <div className="text-[1.6rem] leading-tight font-data" style={{ color: 'var(--color-text-primary)' }}>
+                    {getUrgentLabel(urgent.type)} in {formatCountdown(urgent.window.peakTime)}
+                  </div>
+                  <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                    {formatShortTime(urgent.window.startTime)} - {formatShortTime(urgent.window.endTime)}
+                  </div>
                 </div>
-                <div className="text-[1.6rem] leading-tight font-data" style={{ color: 'var(--color-text-primary)' }}>
-                  {getUrgentLabel(urgent.type)} in {formatCountdown(urgent.window.peakTime)}
+              ) : (
+                <div className="flex flex-col gap-1">
+                  <div className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                    Predictions warming up
+                  </div>
+                  <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                    Log a few events and timing windows will appear here.
+                  </div>
                 </div>
-                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                  {formatShortTime(urgent.window.startTime)} - {formatShortTime(urgent.window.endTime)}
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-1">
-                <div className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                  Predictions warming up
-                </div>
-                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                  Log a few events and timing windows will appear here.
-                </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          <div className="grid grid-cols-3 gap-2">
-            <div className="metric-card">
-              <span className="metric-label">Today</span>
-              <span className="metric-value">{todayLogged}</span>
-              <span className="metric-caption">events</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-label">Model</span>
-              <span className="metric-value">{Math.round(avgConfidence * 100)}%</span>
-              <span className="metric-caption">confidence</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-label">Latest</span>
-              <span className="metric-value text-[1.4rem]">{lastLoggedEvent ? formatShortTime(lastLoggedEvent.timestamp) : '--'}</span>
-              <span className="metric-caption">last event</span>
+            <div className="grid grid-cols-3 gap-2 md:grid-cols-1 md:gap-1.5">
+              <div className="metric-card md:py-2.5 md:px-3.5">
+                <span className="metric-label">Today</span>
+                <span className="metric-value md:text-[1.6rem]">{todayLogged}</span>
+                <span className="metric-caption">events</span>
+              </div>
+              <div className="metric-card md:py-2.5 md:px-3.5">
+                <span className="metric-label">Model</span>
+                <span className="metric-value md:text-[1.6rem]">{Math.round(avgConfidence * 100)}%</span>
+                <span className="metric-caption">confidence</span>
+              </div>
+              <div className="metric-card md:py-2.5 md:px-3.5">
+                <span className="metric-label">Latest</span>
+                <span className="metric-value text-[1.4rem] md:text-[1.3rem]">{lastLoggedEvent ? formatShortTime(lastLoggedEvent.timestamp) : '--'}</span>
+                <span className="metric-caption">last event</span>
+              </div>
             </div>
           </div>
         </div>
@@ -254,7 +256,7 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
           <h2 className="section-title">Predicted windows</h2>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
           <NextEventCard
             eventType="pee"
             window={prediction.pee.nextEventEstimate.window80}
