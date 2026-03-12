@@ -186,76 +186,34 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
 
   return (
     <div
-      className="flex min-h-full flex-col gap-5 px-5 pb-7"
-      style={{ paddingTop: 'calc(env(safe-area-inset-top) + 24px)' }}
+      className="flex min-h-full flex-col gap-4 px-4 pb-6"
+      style={{ paddingTop: 'calc(env(safe-area-inset-top) + 20px)' }}
     >
-      <div className="surface-card-hero ambient-glow p-6 animate-entrance animate-entrance-1">
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center justify-between gap-4">
-            <div className="icon-badge" style={{ width: 60, height: 60, borderRadius: 20 }}>
-              <svg width="34" height="34" viewBox="0 0 44 44" fill="none" aria-hidden="true">
-                <path d="M22 6C22 6 12 17 12 27a10 10 0 0020 0C32 17 22 6 22 6z" fill="var(--color-pee)" opacity="0.22" />
-                <path d="M22 6C22 6 16 14 16 22a6 6 0 0012 0C28 14 22 6 22 6z" fill="var(--color-pee)" opacity="0.8" />
-                <circle cx="22" cy="10" r="2.5" fill="var(--color-sleep)" />
-                <circle cx="29" cy="14" r="1.5" fill="var(--color-sleep)" opacity="0.8" />
-                <circle cx="15.5" cy="14" r="1.2" fill="var(--color-poop)" opacity="0.9" />
-              </svg>
-            </div>
-
-            <div className="eyebrow-pill" style={{ color: 'var(--color-accent)' }}>
-              PawClock
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <h1 className="page-title">
-              Pet care that feels <em>one step ahead</em>.
-            </h1>
-            <p className="page-subtitle">
-              Learn your pet&apos;s natural bathroom and sleep rhythms, then turn those patterns into calm, confident daily care.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { label: 'Sleep', value: 'Rhythms', tint: 'var(--color-sleep-soft)', color: 'var(--color-sleep)' },
-              { label: 'Bathroom', value: 'Windows', tint: 'var(--color-pee-soft)', color: 'var(--color-pee)' },
-              { label: 'Private', value: 'On-device', tint: 'rgba(111,143,119,0.12)', color: 'var(--color-success)' },
-            ].map((item) => (
-              <div
-                key={item.label}
-                className="rounded-[20px] px-3 py-3"
-                style={{
-                  background: item.tint,
-                  border: '1px solid rgba(127,100,76,0.08)',
-                }}
-              >
-                <div className="text-[11px] font-semibold uppercase tracking-[0.16em]" style={{ color: item.color }}>
-                  {item.label}
-                </div>
-                <div className="mt-2 text-sm font-semibold leading-tight" style={{ color: 'var(--color-text-primary)' }}>
-                  {item.value}
-                </div>
-              </div>
-            ))}
-          </div>
+      <div className="surface-card-hero p-5 animate-entrance animate-entrance-1">
+        <div className="flex flex-col gap-4">
+          <h1 className="page-title">
+            Pet care that feels <em>one step ahead</em>.
+          </h1>
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            Learn your pet&apos;s natural bathroom and sleep rhythms, then turn those patterns into calm, confident daily care.
+          </p>
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 animate-entrance animate-entrance-2">
+      <div className="flex flex-col gap-2 animate-entrance animate-entrance-2">
         {features.map((feature) => (
           <div
             key={feature.title}
-            className="surface-card-soft flex items-start gap-4 px-4 py-4"
+            className="surface-card-soft flex items-start gap-3 px-4 py-3"
           >
-            <div className="icon-badge" style={{ background: feature.color, color: feature.iconColor }}>
+            <div className="icon-badge shrink-0" style={{ background: feature.color, color: feature.iconColor }}>
               {feature.icon}
             </div>
-            <div className="flex flex-col gap-1">
-              <div className="text-[15px] font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+            <div className="flex flex-col">
+              <div className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                 {feature.title}
               </div>
-              <div className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
+              <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                 {feature.text}
               </div>
             </div>
@@ -265,7 +223,7 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
 
       <div className="mt-auto animate-entrance animate-entrance-3">
         <button onClick={onNext} className="primary-button btn-tactile w-full" aria-label="Get started" type="button">
-          Create your first pet profile
+          Get started
         </button>
       </div>
     </div>
@@ -303,7 +261,7 @@ function SpeciesStep({
   ];
 
   return (
-    <div className="flex flex-col gap-6 px-5 pb-6 pt-3">
+    <div className="flex flex-col gap-4 px-4 pb-4 pt-2">
       <StepIntro
         eyebrow="Step 1"
         title={<>What kind of pet are we learning?</>}
@@ -386,7 +344,7 @@ function BreedStep({
     : breeds;
 
   return (
-    <div className="flex flex-col gap-5 px-5 pb-6 pt-3">
+    <div className="flex flex-col gap-4 px-4 pb-4 pt-2">
       <StepIntro
         eyebrow="Step 2"
         title={<>Choose the breed or type</>}
@@ -470,7 +428,7 @@ function DetailsStep({
   const ageYears = (form.ageMonths / 12).toFixed(1);
 
   return (
-    <div className="flex flex-col gap-5 px-5 pb-6 pt-3">
+    <div className="flex flex-col gap-4 px-4 pb-4 pt-2">
       <StepIntro
         eyebrow="Step 3"
         title={<>A few details shape the baseline</>}
@@ -631,7 +589,7 @@ function MealsStep({
   }
 
   return (
-    <div className="flex flex-col gap-5 px-5 pb-6 pt-3">
+    <div className="flex flex-col gap-4 px-4 pb-4 pt-2">
       <StepIntro
         eyebrow="Step 4"
         title={<>Set the usual meal rhythm</>}
@@ -699,7 +657,7 @@ function MealsStep({
 
 function NameStep({ name, onChange }: { name: string; onChange: (n: string) => void }) {
   return (
-    <div className="flex flex-col gap-5 px-5 pb-6 pt-3">
+    <div className="flex flex-col gap-4 px-4 pb-4 pt-2">
       <StepIntro
         eyebrow="Step 5"
         title={<>What should we call them?</>}
@@ -747,10 +705,10 @@ function DoneStep({ name, onStart }: { name: string; onStart: () => void }) {
 
   return (
     <div
-      className="flex min-h-full flex-col gap-5 px-5 pb-7"
-      style={{ paddingTop: 'calc(env(safe-area-inset-top) + 24px)' }}
+      className="flex min-h-full flex-col gap-4 px-4 pb-6"
+      style={{ paddingTop: 'calc(env(safe-area-inset-top) + 20px)' }}
     >
-      <div className="surface-card-hero ambient-glow p-6 animate-entrance animate-entrance-1">
+      <div className="surface-card-hero p-5 animate-entrance animate-entrance-1">
         <div className="flex flex-col gap-5">
           <div
             className="flex h-16 w-16 items-center justify-center rounded-[22px]"
@@ -880,16 +838,16 @@ const Onboarding = memo(function Onboarding({ onComplete }: OnboardingProps) {
     <div className="flex min-h-dvh flex-col" style={{ background: 'transparent' }}>
       {showProgress && (
         <div
-          className="shrink-0 px-5 pb-3 pt-4"
-          style={{ paddingTop: 'calc(env(safe-area-inset-top) + 16px)' }}
+          className="shrink-0 px-4 pb-2 pt-3"
+          style={{ paddingTop: 'calc(env(safe-area-inset-top) + 12px)' }}
         >
-          <div className="surface-card-soft flex items-center gap-3 rounded-[22px] px-3 py-3">
+          <div className="flex items-center gap-3 px-1 py-2">
             {step > 1 ? (
               <button
                 onClick={() => setStep((current) => current - 1)}
                 type="button"
-                className="btn-tactile flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
-                style={{ background: 'rgba(255,255,255,0.88)', color: 'var(--color-text-secondary)' }}
+                className="btn-tactile flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+                style={{ color: 'var(--color-text-secondary)' }}
                 aria-label="Go back"
               >
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
@@ -897,9 +855,7 @@ const Onboarding = memo(function Onboarding({ onComplete }: OnboardingProps) {
                 </svg>
               </button>
             ) : (
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/55 text-xs font-semibold" style={{ color: 'var(--color-text-muted)' }}>
-                {step}
-              </div>
+              <div className="h-8 w-8" />
             )}
 
             <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -935,20 +891,18 @@ const Onboarding = memo(function Onboarding({ onComplete }: OnboardingProps) {
 
       {(showNext || showName) && (
         <div
-          className="shrink-0 px-5 pb-5 pt-3"
-          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 18px)' }}
+          className="shrink-0 px-4 pb-4 pt-2"
+          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)' }}
         >
-          <div className="surface-card-soft rounded-[22px] p-3">
-            <button
-              onClick={() => setStep((current) => current + 1)}
-              disabled={!canProceed()}
-              className="primary-button btn-tactile w-full"
-              aria-label="Continue to next step"
-              type="button"
-            >
-              {showName ? 'Review and finish' : 'Continue'}
-            </button>
-          </div>
+          <button
+            onClick={() => setStep((current) => current + 1)}
+            disabled={!canProceed()}
+            className="primary-button btn-tactile w-full"
+            aria-label="Continue to next step"
+            type="button"
+          >
+            {showName ? 'Review and finish' : 'Continue'}
+          </button>
         </div>
       )}
     </div>

@@ -84,15 +84,6 @@ function Toggle({
   );
 }
 
-function StatBadge({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="metric-card p-4">
-      <span className="metric-label">{label}</span>
-      <span className="metric-value text-[1.7rem]">{value}</span>
-    </div>
-  );
-}
-
 function PetProfileCard({ pet }: { pet: PetProfile }) {
   const ageYears = (pet.ageMonths / 12).toFixed(1);
   const mealTimesFormatted = pet.mealTimes
@@ -106,61 +97,40 @@ function PetProfileCard({ pet }: { pet: PetProfile }) {
     .join(', ');
 
   return (
-    <section className="surface-card-hero overflow-hidden">
-      <div className="p-6">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div
-              className="icon-badge"
-              style={{
-                width: 64,
-                height: 64,
-                borderRadius: 22,
-                background: pet.species === 'dog' ? 'var(--color-pee-soft)' : 'var(--color-sleep-soft)',
-                fontSize: 32,
-              }}
-            >
-              {pet.species === 'dog' ? '🐕' : '🐈'}
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="page-title text-[2rem]">{pet.name}</div>
-              <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                {pet.breed}
-              </div>
+    <section className="surface-card overflow-hidden">
+      <div className="p-4">
+        <div className="flex items-center gap-3">
+          <div
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] text-2xl"
+            style={{
+              background: pet.species === 'dog' ? 'var(--color-pee-soft)' : 'var(--color-sleep-soft)',
+            }}
+          >
+            {pet.species === 'dog' ? '🐕' : '🐈'}
+          </div>
+          <div className="flex min-w-0 flex-1 flex-col">
+            <div className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>{pet.name}</div>
+            <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+              {pet.breed} · {ageYears}y · {pet.weightKg}kg
             </div>
           </div>
-
-          <div className="info-pill capitalize">{pet.species}</div>
         </div>
 
-        <div className="mt-5 grid grid-cols-3 gap-3">
-          <StatBadge label="Age" value={`${ageYears}y`} />
-          <StatBadge label="Weight" value={`${pet.weightKg}kg`} />
-          <StatBadge label="Meals" value={pet.mealTimes.length} />
-        </div>
-
-        <div className="mt-5 flex flex-wrap gap-2">
+        <div className="mt-3 flex flex-wrap gap-1.5">
           {pet.neutered ? (
-            <span className="info-pill" style={{ background: 'rgba(255,255,255,0.84)' }}>
+            <span className="rounded-full px-2.5 py-1 text-xs font-medium" style={{ background: 'rgba(127,100,76,0.06)', color: 'var(--color-text-secondary)' }}>
               Neutered
             </span>
           ) : null}
-          <span className="info-pill" style={{ background: 'rgba(255,255,255,0.84)' }}>
+          <span className="rounded-full px-2.5 py-1 text-xs font-medium" style={{ background: 'rgba(127,100,76,0.06)', color: 'var(--color-text-secondary)' }}>
             {pet.indoor ? 'Indoor' : 'Outdoor'}
           </span>
-          <span className="info-pill capitalize" style={{ background: 'rgba(255,255,255,0.84)' }}>
+          <span className="rounded-full px-2.5 py-1 text-xs font-medium capitalize" style={{ background: 'rgba(127,100,76,0.06)', color: 'var(--color-text-secondary)' }}>
             {pet.dietType} food
           </span>
-          <span className="info-pill capitalize" style={{ background: 'rgba(255,255,255,0.84)' }}>
-            {pet.sizeClass}
+          <span className="rounded-full px-2.5 py-1 text-xs font-medium" style={{ background: 'rgba(127,100,76,0.06)', color: 'var(--color-text-secondary)' }}>
+            Meals: {mealTimesFormatted}
           </span>
-        </div>
-      </div>
-
-      <div className="border-t px-6 py-4" style={{ borderColor: 'rgba(127,100,76,0.08)' }}>
-        <div className="metric-label">Meal times</div>
-        <div className="mt-2 text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
-          {mealTimesFormatted}
         </div>
       </div>
     </section>
@@ -200,19 +170,14 @@ const Settings = memo(function Settings({
 
   return (
     <div className="page-scroll page-scroll--tight" role="main" aria-label="Settings">
-      <section className="surface-card-hero animate-entrance animate-entrance-1 p-6">
-        <div className="flex flex-col gap-3">
-          <div className="eyebrow-pill w-fit" style={{ color: 'var(--color-accent)' }}>
-            Preferences
-          </div>
-          <div className="flex flex-col gap-2">
-            <h1 className="page-title">
-              Product <em>settings</em>
-            </h1>
-            <p className="page-subtitle">
-              Tune notifications, review profile details, export your data, and keep the app running the way you want.
-            </p>
-          </div>
+      <section className="surface-card-hero animate-entrance animate-entrance-1 p-5">
+        <div className="flex flex-col gap-1">
+          <h1 className="page-title">
+            <em>Settings</em>
+          </h1>
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            Profile, notifications, data, and app info.
+          </p>
         </div>
       </section>
 
@@ -283,7 +248,7 @@ const Settings = memo(function Settings({
             onClick={handleExport}
             disabled={isExporting}
             type="button"
-            className="btn-tactile flex w-full items-center gap-4 px-5 py-5 text-left"
+            className="btn-tactile flex w-full items-center gap-3 px-4 py-4 text-left"
             style={{ opacity: isExporting ? 0.7 : 1 }}
             aria-label="Export data as JSON"
           >

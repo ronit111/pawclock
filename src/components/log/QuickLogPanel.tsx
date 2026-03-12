@@ -278,8 +278,8 @@ const QuickLogPanel = memo(function QuickLogPanel({
     useCustomTime,
   ]);
 
-  const peekHeight = 222;
-  const expandedHeight = typeof window !== 'undefined' ? Math.min(window.innerHeight * 0.74, 620) : 580;
+  const peekHeight = 200;
+  const expandedHeight = typeof window !== 'undefined' ? Math.min(window.innerHeight * 0.72, 580) : 540;
   const sheetHeight = sheetState === 'expanded' ? expandedHeight : sheetState === 'peek' ? peekHeight : 0;
 
   const sleepLabel = isSleeping ? 'Wake' : 'Sleep';
@@ -353,24 +353,27 @@ const QuickLogPanel = memo(function QuickLogPanel({
 
       <div
         ref={sheetRef}
-        className={`${sheetState === 'expanded' ? 'fixed z-50' : 'mx-3 mb-3 shrink-0'} flex flex-col`}
+        className={`${sheetState === 'expanded' ? 'fixed z-50' : 'shrink-0'} flex flex-col`}
         style={{
           ...(sheetState === 'expanded'
             ? {
-                left: 12,
-                right: 12,
-                bottom: 'calc(env(safe-area-inset-bottom, 0px) + 74px)',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: 'min(640px, calc(100% - 32px))',
+                bottom: 'calc(env(safe-area-inset-bottom, 0px) + 56px)',
               }
-            : {}),
+            : {
+                margin: '0 16px 8px',
+              }),
           height: sheetHeight,
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(247,240,232,0.98) 100%)',
-          border: '1px solid rgba(255,255,255,0.86)',
-          borderRadius: 28,
-          boxShadow: 'var(--shadow-lg)',
+          background: 'linear-gradient(180deg, rgba(255,255,255,0.97) 0%, rgba(249,244,238,0.98) 100%)',
+          border: '1px solid rgba(127,100,76,0.1)',
+          borderRadius: 20,
+          boxShadow: 'var(--shadow-md)',
           overflow: 'hidden',
-          transition: 'height 300ms cubic-bezier(0.16, 1, 0.3, 1), transform 220ms ease',
-          backdropFilter: 'blur(24px) saturate(1.1)',
-          WebkitBackdropFilter: 'blur(24px) saturate(1.1)',
+          transition: 'height 300ms cubic-bezier(0.16, 1, 0.3, 1)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
         }}
         role="dialog"
         aria-label="Quick log panel"
@@ -385,24 +388,20 @@ const QuickLogPanel = memo(function QuickLogPanel({
           <span className="h-1.5 w-11 rounded-full" style={{ background: 'rgba(127,100,76,0.22)' }} />
         </button>
 
-        <div className="px-5 pb-4">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex min-w-0 flex-col gap-1">
-              <div className="section-label" style={{ color: activeCopy.color }}>
-                Quick log
-              </div>
-              <div className="text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+        <div className="px-4 pb-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex min-w-0 flex-col gap-0.5">
+              <div className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                 {activeCopy.title}
               </div>
-              <div className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
+              <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                 {activeCopy.description}
               </div>
             </div>
-            <div className="info-pill shrink-0">Today</div>
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 px-5">
+        <div className="grid grid-cols-3 gap-2 px-4">
           {typeCards.map((card) => {
             const active = activeType === card.type;
             const sleepingGlow = card.type === 'sleep' && isSleeping && !active;
@@ -415,7 +414,7 @@ const QuickLogPanel = memo(function QuickLogPanel({
                 }}
                 type="button"
                 aria-label={`Log ${card.label}`}
-                className="btn-tactile flex flex-col items-start gap-3 rounded-[22px] px-4 py-4 text-left"
+                className="btn-tactile flex flex-col items-start gap-2 rounded-[16px] px-3 py-3 text-left"
                 style={{
                   background: active
                     ? `linear-gradient(180deg, ${card.tint} 0%, rgba(255,255,255,0.96) 100%)`
@@ -452,7 +451,7 @@ const QuickLogPanel = memo(function QuickLogPanel({
         </div>
 
         {sheetState === 'peek' ? (
-          <div className="mt-4 grid grid-cols-3 gap-3 px-5 pb-5">
+          <div className="mt-2 grid grid-cols-3 gap-2 px-4 pb-3">
             {[
               { label: 'Sleep', count: todayCounts.sleep, tint: 'var(--color-sleep-soft)', color: 'var(--color-sleep)' },
               { label: 'Pee', count: todayCounts.pee, tint: 'var(--color-pee-soft)', color: 'var(--color-pee)' },
@@ -472,7 +471,7 @@ const QuickLogPanel = memo(function QuickLogPanel({
 
         {sheetState === 'expanded' ? (
           <div
-            className="hide-scrollbar mt-4 flex-1 overflow-y-auto px-5 pb-5"
+            className="hide-scrollbar mt-3 flex-1 overflow-y-auto px-4 pb-4"
             style={{ WebkitOverflowScrolling: 'touch' } as CSSProperties}
           >
             <div className="flex flex-col gap-4">
@@ -635,13 +634,13 @@ const QuickLogPanel = memo(function QuickLogPanel({
 
       {sheetState === 'collapsed' ? (
         <button
-          className="absolute z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-xl"
+          className="fixed z-50 flex h-14 w-14 items-center justify-center rounded-full"
           style={{
-            right: 20,
-            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 80px)',
+            right: 'max(20px, calc(50% - 300px))',
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 60px)',
             background: 'var(--color-accent)',
             color: '#fff8f4',
-            boxShadow: '0 18px 30px rgba(217,102,76,0.26)',
+            boxShadow: '0 4px 12px rgba(217,102,76,0.24)',
           }}
           onClick={() => {
             haptic();

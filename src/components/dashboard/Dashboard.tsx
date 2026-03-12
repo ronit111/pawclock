@@ -81,10 +81,6 @@ function getUrgentTint(type: EventType): string {
   return 'var(--color-sleep-soft)';
 }
 
-function speciesBadge(species: PetProfile['species']): string {
-  return species === 'dog' ? 'Dog profile' : 'Cat profile';
-}
-
 const Dashboard = memo(function Dashboard({ pet, prediction, events }: DashboardProps) {
   const [now] = useState(() => new Date());
   const [visibleTypes, setVisibleTypes] = useState<Set<EventType>>(
@@ -139,40 +135,24 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
     [events],
   );
 
-  const latestUpdateLabel = lastLoggedEvent
-    ? `${lastLoggedEvent.type === 'sleep_start' ? 'Sleep' : lastLoggedEvent.type === 'sleep_end' ? 'Wake' : lastLoggedEvent.type === 'pee' ? 'Pee' : 'Poop'} logged ${formatShortTime(lastLoggedEvent.timestamp)}`
-    : 'Start logging to personalize predictions';
-
   return (
     <div className="page-scroll">
-      <section className="surface-card-hero ambient-glow animate-entrance animate-entrance-1 p-6">
-        <div className="flex flex-col gap-6">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex min-w-0 flex-col gap-3">
-              <div className="eyebrow-pill w-fit" style={{ color: 'var(--color-accent)' }}>
-                Daily prediction
-              </div>
-              <div className="flex flex-col gap-2">
-                <h1 className="page-title">
-                  {pet.name}&apos;s <em>day</em>
-                </h1>
-                <p className="page-subtitle">
-                  {status}. {currentTimeStr}.
-                </p>
-              </div>
+      <section className="surface-card-hero animate-entrance animate-entrance-1 p-5">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex min-w-0 flex-col gap-2">
+              <h1 className="page-title">
+                {pet.name}&apos;s <em>day</em>
+              </h1>
+              <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                {status}. {currentTimeStr}.
+              </p>
             </div>
-
-            <div className="flex flex-col items-end gap-3">
-              <div className="info-pill" style={{ color: 'var(--color-text-primary)' }}>
-                <span>{pet.species === 'dog' ? '🐕' : '🐈'}</span>
-                <span>{speciesBadge(pet.species)}</span>
-              </div>
-              <ConfidenceIndicator confidence={avgConfidence} size="sm" />
-            </div>
+            <ConfidenceIndicator confidence={avgConfidence} size="sm" />
           </div>
 
           <div
-            className="surface-card-inset p-5"
+            className="surface-card-inset p-4"
             aria-live="polite"
             aria-label="Most urgent upcoming event"
             style={{
@@ -182,57 +162,39 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
             }}
           >
             {urgent ? (
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div
-                    className="eyebrow-pill"
-                    style={{
-                      color: getUrgentColor(urgent.type),
-                      background: 'rgba(255,255,255,0.78)',
-                    }}
-                  >
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: getUrgentColor(urgent.type) }}>
                     Up next
-                  </div>
-                  <div
-                    className="info-pill"
-                    style={{
-                      color: getUrgentColor(urgent.type),
-                      background: 'rgba(255,255,255,0.82)',
-                    }}
-                  >
+                  </span>
+                  <span className="text-xs font-semibold" style={{ color: getUrgentColor(urgent.type) }}>
                     {Math.round(urgent.window.confidence * 100)}% likely
-                  </div>
+                  </span>
                 </div>
-
-                <div className="flex flex-col gap-2">
-                  <div className="text-[1.8rem] leading-[1.05] font-data" style={{ color: 'var(--color-text-primary)' }}>
-                    {getUrgentLabel(urgent.type)} in {formatCountdown(urgent.window.peakTime)}
-                  </div>
-                  <div className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
-                    Best window: {formatShortTime(urgent.window.startTime)} to {formatShortTime(urgent.window.endTime)}
-                  </div>
+                <div className="text-[1.6rem] leading-tight font-data" style={{ color: 'var(--color-text-primary)' }}>
+                  {getUrgentLabel(urgent.type)} in {formatCountdown(urgent.window.peakTime)}
+                </div>
+                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                  {formatShortTime(urgent.window.startTime)} - {formatShortTime(urgent.window.endTime)}
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col gap-2">
-                <div className="eyebrow-pill w-fit" style={{ color: 'var(--color-text-muted)' }}>
-                  Up next
+              <div className="flex flex-col gap-1">
+                <div className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                  Predictions warming up
                 </div>
-                <div className="text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                  Predictions are still warming up.
-                </div>
-                <div className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
-                  Add a few recent events and this dashboard will start surfacing stronger timing windows.
+                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                  Log a few events and timing windows will appear here.
                 </div>
               </div>
             )}
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2">
             <div className="metric-card">
-              <span className="metric-label">Logged today</span>
+              <span className="metric-label">Today</span>
               <span className="metric-value">{todayLogged}</span>
-              <span className="metric-caption">events tracked</span>
+              <span className="metric-caption">events</span>
             </div>
             <div className="metric-card">
               <span className="metric-label">Model</span>
@@ -241,30 +203,19 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
             </div>
             <div className="metric-card">
               <span className="metric-label">Latest</span>
-              <span className="metric-value text-[1.45rem]">{lastLoggedEvent ? formatShortTime(lastLoggedEvent.timestamp) : '--'}</span>
+              <span className="metric-value text-[1.4rem]">{lastLoggedEvent ? formatShortTime(lastLoggedEvent.timestamp) : '--'}</span>
               <span className="metric-caption">last event</span>
             </div>
-          </div>
-
-          <div
-            className="surface-card-soft rounded-[20px] px-4 py-3 text-sm"
-            style={{ color: 'var(--color-text-secondary)' }}
-          >
-            {latestUpdateLabel}
           </div>
         </div>
       </section>
 
       <section className="section-stack animate-entrance animate-entrance-2">
         <div className="section-head">
-          <div className="flex flex-col gap-1">
-            <div className="section-label">Timeline</div>
-            <h2 className="section-title">24-hour rhythm view</h2>
-          </div>
-          <div className="info-pill">Live layers</div>
+          <h2 className="section-title">24h timeline</h2>
         </div>
 
-        <div className="hide-scrollbar flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Filter event types">
+        <div className="hide-scrollbar flex gap-2 overflow-x-auto" role="group" aria-label="Filter event types">
           {FILTER_CONFIG.map(({ type, label, color, tint }) => {
             const active = visibleTypes.has(type);
             return (
@@ -300,13 +251,10 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
 
       <section className="section-stack animate-entrance animate-entrance-3" aria-label="Upcoming events">
         <div className="section-head">
-          <div className="flex flex-col gap-1">
-            <div className="section-label">Predicted windows</div>
-            <h2 className="section-title">What the next few hours look like</h2>
-          </div>
+          <h2 className="section-title">Predicted windows</h2>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           <NextEventCard
             eventType="pee"
             window={prediction.pee.nextEventEstimate.window80}

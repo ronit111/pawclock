@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CyclePrediction, EventType, PetEvent, PetPrediction } from '../../types';
 
 interface TimelineProps {
@@ -236,6 +236,21 @@ const Timeline = memo(function Timeline({
   currentTime = new Date(),
 }: TimelineProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  const measureWidth = useCallback(() => {
+    if (containerRef.current) {
+      setContainerWidth(containerRef.current.clientWidth);
+    }
+  }, []);
+
+  useEffect(() => {
+    measureWidth();
+    const observer = new ResizeObserver(measureWidth);
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [measureWidth]);
 
   const dayStart = useMemo(() => {
     const date = new Date(currentTime);
@@ -252,7 +267,7 @@ const Timeline = memo(function Timeline({
     scrollRef.current.scrollTop = Math.max(0, nowY - containerHeight * 0.35);
   }, [nowY]);
 
-  const svgWidth = typeof window !== 'undefined' ? Math.min(window.innerWidth, 430) - 40 : 390;
+  const svgWidth = containerWidth > 0 ? containerWidth - 16 : 390;
   const lanesAreaWidth = svgWidth - LEFT_GUTTER - RIGHT_PAD - LANE_GAP * (LANES.length - 1);
   const laneWidth = Math.floor(lanesAreaWidth / LANES.length);
 
@@ -274,8 +289,8 @@ const Timeline = memo(function Timeline({
   const hours = Array.from({ length: 25 }, (_, index) => index);
 
   return (
-    <div className="surface-card overflow-hidden">
-      <div className="flex items-center justify-between gap-3 border-b px-4 py-4" style={{ borderColor: 'rgba(127,100,76,0.08)' }}>
+    <div ref={containerRef} className="surface-card overflow-hidden">
+      <div className="flex items-center justify-between gap-3 border-b px-4 py-3" style={{ borderColor: 'rgba(127,100,76,0.08)' }}>
         <div className="flex flex-col gap-1">
           <div className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
             Probability river
