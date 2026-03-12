@@ -278,7 +278,7 @@ const QuickLogPanel = memo(function QuickLogPanel({
     useCustomTime,
   ]);
 
-  const peekHeight = 200;
+  const peekHeight = 168;
   const expandedHeight = typeof window !== 'undefined' ? Math.min(window.innerHeight * 0.72, 580) : 540;
   const sheetHeight = sheetState === 'expanded' ? expandedHeight : sheetState === 'peek' ? peekHeight : 0;
 
@@ -450,24 +450,7 @@ const QuickLogPanel = memo(function QuickLogPanel({
           })}
         </div>
 
-        {sheetState === 'peek' ? (
-          <div className="mt-2 grid grid-cols-3 gap-2 px-4 pb-3">
-            {[
-              { label: 'Sleep', count: todayCounts.sleep, tint: 'var(--color-sleep-soft)', color: 'var(--color-sleep)' },
-              { label: 'Pee', count: todayCounts.pee, tint: 'var(--color-pee-soft)', color: 'var(--color-pee)' },
-              { label: 'Poop', count: todayCounts.poop, tint: 'var(--color-poop-soft)', color: 'var(--color-poop)' },
-            ].map((item) => (
-              <div
-                key={item.label}
-                className="rounded-[18px] px-3 py-3"
-                style={{ background: item.tint, color: item.color }}
-              >
-                <div className="text-[11px] font-semibold uppercase tracking-[0.14em]">{item.label}</div>
-                <div className="mt-2 font-data text-[1.6rem] leading-none">{item.count}</div>
-              </div>
-            ))}
-          </div>
-        ) : null}
+        {sheetState === 'peek' ? <div className="pb-2" /> : null}
 
         {sheetState === 'expanded' ? (
           <div
