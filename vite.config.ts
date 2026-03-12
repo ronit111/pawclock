@@ -8,14 +8,14 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       manifest: {
         name: 'PawClock',
         short_name: 'PawClock',
         description: 'Predict your pet\'s sleep, pee, and poop cycles',
-        theme_color: '#0F0E0C',
-        background_color: '#0F0E0C',
+        theme_color: '#fffaf4',
+        background_color: '#fffaf4',
         display: 'standalone',
         orientation: 'portrait',
         icons: [

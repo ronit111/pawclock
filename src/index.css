@@ -141,7 +141,7 @@ textarea::placeholder {
 
 .app-frame {
   width: 100%;
-  max-width: 640px;
+  max-width: 100%;
   min-height: 100dvh;
   margin: 0 auto;
   display: flex;
@@ -149,6 +149,18 @@ textarea::placeholder {
   position: relative;
   isolation: isolate;
   transform: translateZ(0);
+}
+
+@media (min-width: 640px) {
+  .app-frame {
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-frame {
+    max-width: 860px;
+  }
 }
 
 .font-data {
@@ -170,8 +182,15 @@ textarea::placeholder {
 
 @media (min-width: 480px) {
   .page-scroll {
-    padding: 24px 24px 140px;
-    gap: 20px;
+    padding: 20px 20px 140px;
+    gap: 18px;
+  }
+}
+
+@media (min-width: 768px) {
+  .page-scroll {
+    padding: 28px 28px 140px;
+    gap: 22px;
   }
 }
 

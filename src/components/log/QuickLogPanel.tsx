@@ -359,7 +359,7 @@ const QuickLogPanel = memo(function QuickLogPanel({
             ? {
                 left: '50%',
                 transform: 'translateX(-50%)',
-                width: 'min(640px, calc(100% - 32px))',
+                width: 'min(860px, calc(100% - 32px))',
                 bottom: 'calc(env(safe-area-inset-bottom, 0px) + 56px)',
               }
             : {
@@ -636,7 +636,7 @@ const QuickLogPanel = memo(function QuickLogPanel({
         <button
           className="fixed z-50 flex h-14 w-14 items-center justify-center rounded-full"
           style={{
-            right: 'max(20px, calc(50% - 300px))',
+            right: 'max(20px, calc(50% - 410px))',
             bottom: 'calc(env(safe-area-inset-bottom, 0px) + 60px)',
             background: 'var(--color-accent)',
             color: '#fff8f4',
