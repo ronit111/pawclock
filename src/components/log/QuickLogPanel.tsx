@@ -503,7 +503,7 @@ const QuickLogPanel = memo(function QuickLogPanel({
                   />
 
                   <div className="surface-card-inset flex items-center justify-between gap-4 px-4 py-4">
-                    <div className="flex flex-col gap-1">
+                    <div className="flex min-w-0 flex-1 flex-col gap-1">
                       <span className="text-[15px] font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                         Unusual location
                       </span>
@@ -556,7 +556,7 @@ const QuickLogPanel = memo(function QuickLogPanel({
 
               <div className="surface-card flex flex-col gap-4 p-4">
                 <div className="flex items-center justify-between gap-4">
-                  <div className="flex flex-col gap-1">
+                  <div className="flex min-w-0 flex-1 flex-col gap-1">
                     <span className="metric-label">Time</span>
                     <span className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
                       Log this event now or backdate it.
@@ -565,7 +565,7 @@ const QuickLogPanel = memo(function QuickLogPanel({
                   <button
                     onClick={() => setUseCustomTime((value) => !value)}
                     type="button"
-                    className="info-pill btn-tactile"
+                    className="info-pill btn-tactile shrink-0"
                     aria-label="Toggle time adjustment"
                   >
                     {useCustomTime ? 'Use current time' : 'Adjust time'}
