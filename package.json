@@ -1,7 +1,13 @@
 {
   "name": "pawclock",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "Predict your pet's sleep, pee, and poop cycles using Bayesian probabilistic models",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ronit111/pawclock.git"
+  },
+  "homepage": "https://pawclock.netlify.app",
   "type": "module",
   "scripts": {
     "dev": "vite",
