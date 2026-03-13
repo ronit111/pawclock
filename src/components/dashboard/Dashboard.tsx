@@ -140,12 +140,12 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
       {/* ── Hero: title + prediction + metrics ── */}
       <section className="surface-card-hero animate-entrance animate-entrance-1 p-5">
         <div className="flex flex-col gap-4">
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-start justify-between gap-3">
             <div className="flex min-w-0 flex-col gap-2">
-              <h1 className="page-title">
+              <h1 className="page-title truncate">
                 {pet.name}&apos;s <em>day</em>
               </h1>
-              <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+              <p className="truncate text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                 {status}. {currentTimeStr}.
               </p>
             </div>
@@ -153,7 +153,7 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
           </div>
 
           <div
-            className="surface-card-inset p-4"
+            className="surface-card-inset overflow-hidden p-4"
             aria-live="polite"
             aria-label="Most urgent upcoming event"
             style={{
@@ -172,10 +172,10 @@ const Dashboard = memo(function Dashboard({ pet, prediction, events }: Dashboard
                     {Math.round(urgent.window.confidence * 100)}% likely
                   </span>
                 </div>
-                <div className="text-[1.6rem] leading-tight font-data" style={{ color: 'var(--color-text-primary)' }}>
+                <div className="truncate text-[1.6rem] leading-tight font-data" style={{ color: 'var(--color-text-primary)' }}>
                   {getUrgentLabel(urgent.type)} in {formatCountdown(urgent.window.peakTime)}
                 </div>
-                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                <div className="truncate text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                   {formatShortTime(urgent.window.startTime)} - {formatShortTime(urgent.window.endTime)}
                 </div>
               </div>

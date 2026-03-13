@@ -46,12 +46,12 @@ function SettingRow({
       className="flex items-center justify-between gap-4 px-5 py-4"
       style={{ borderBottom: border ? '1px solid rgba(127,100,76,0.08)' : 'none' }}
     >
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <span className="text-[15px] font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+      <div className="flex min-w-0 flex-1 flex-col gap-1 overflow-hidden">
+        <span className="truncate text-[15px] font-semibold" style={{ color: 'var(--color-text-primary)' }}>
           {label}
         </span>
         {description ? (
-          <span className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
+          <span className="line-clamp-2 text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>
             {description}
           </span>
         ) : null}
@@ -108,9 +108,9 @@ function PetProfileCard({ pet }: { pet: PetProfile }) {
           >
             {pet.species === 'dog' ? '🐕' : '🐈'}
           </div>
-          <div className="flex min-w-0 flex-1 flex-col">
-            <div className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>{pet.name}</div>
-            <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+          <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+            <div className="truncate text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>{pet.name}</div>
+            <div className="truncate text-sm" style={{ color: 'var(--color-text-secondary)' }}>
               {pet.breed} · {ageYears}y · {pet.weightKg}kg
             </div>
           </div>

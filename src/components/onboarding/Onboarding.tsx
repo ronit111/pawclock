@@ -300,15 +300,16 @@ function SpeciesStep({
               </div>
 
               <div className="flex min-w-0 flex-1 flex-col gap-2">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                <div className="flex min-w-0 flex-wrap items-center gap-2">
+                  <div className="shrink-0 text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                     {option.title}
                   </div>
                   <div
-                    className="rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em]"
+                    className="shrink-0 overflow-hidden truncate whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em]"
                     style={{
                       background: active ? 'rgba(235,125,98,0.12)' : 'rgba(255,255,255,0.72)',
                       color: active ? 'var(--color-accent)' : 'var(--color-text-muted)',
+                      maxWidth: '100%',
                     }}
                   >
                     {active ? 'Selected' : option.badge}
@@ -396,9 +397,9 @@ function BreedStep({
                 aria-pressed={active}
                 aria-label={`Select breed: ${breed}`}
               >
-                <span className="font-medium">{breed}</span>
+                <span className="min-w-0 truncate font-medium">{breed}</span>
                 {active && (
-                  <span className="text-xs font-semibold uppercase tracking-[0.14em]" style={{ color: 'var(--color-accent)' }}>
+                  <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.14em]" style={{ color: 'var(--color-accent)' }}>
                     Selected
                   </span>
                 )}
@@ -470,7 +471,7 @@ function DetailsStep({
         </div>
       </SurfaceBlock>
 
-      <div className="grid grid-cols-[minmax(0,1fr)_120px] gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_140px]">
         <SurfaceBlock className="flex flex-col gap-3">
           <span className="metric-label">Weight</span>
           <p className="text-sm leading-6" style={{ color: 'var(--color-text-secondary)' }}>

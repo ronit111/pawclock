@@ -196,10 +196,10 @@ const History = memo(function History({ events, petName }: HistoryProps) {
                     </div>
 
                     <div className="flex min-w-0 flex-1 flex-col">
-                      <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                      <span className="truncate text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                         {config.label}
                       </span>
-                      <p className="text-xs capitalize" style={{ color: 'var(--color-text-secondary)' }}>
+                      <p className="truncate text-xs capitalize" style={{ color: 'var(--color-text-secondary)' }}>
                         {eventDetails(event)}
                       </p>
                     </div>

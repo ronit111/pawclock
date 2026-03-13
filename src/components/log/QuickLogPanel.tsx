@@ -390,12 +390,12 @@ const QuickLogPanel = memo(function QuickLogPanel({
         </button>
 
         <div className="px-4 pb-3">
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-start justify-between gap-3">
             <div className="flex min-w-0 flex-col gap-0.5">
-              <div className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+              <div className="truncate text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                 {activeCopy.title}
               </div>
-              <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+              <div className="line-clamp-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                 {activeCopy.description}
               </div>
             </div>
@@ -438,11 +438,11 @@ const QuickLogPanel = memo(function QuickLogPanel({
                     {card.count}
                   </div>
                 </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                <div className="flex min-w-0 flex-col gap-1">
+                  <span className="truncate text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                     {card.label}
                   </span>
-                  <span className="text-xs leading-5" style={{ color: 'var(--color-text-secondary)' }}>
+                  <span className="line-clamp-2 text-xs leading-5" style={{ color: 'var(--color-text-secondary)' }}>
                     {card.sublabel}
                   </span>
                 </div>

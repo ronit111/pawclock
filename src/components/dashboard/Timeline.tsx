@@ -290,16 +290,16 @@ const Timeline = memo(function Timeline({
 
   return (
     <div ref={containerRef} className="surface-card overflow-hidden">
-      <div className="flex items-center justify-between gap-3 border-b px-4 py-3" style={{ borderColor: 'rgba(127,100,76,0.08)' }}>
-        <div className="flex flex-col gap-1">
-          <div className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+      <div className="flex min-w-0 items-center justify-between gap-3 border-b px-4 py-3" style={{ borderColor: 'rgba(127,100,76,0.08)' }}>
+        <div className="flex min-w-0 flex-col gap-1">
+          <div className="truncate text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
             Probability river
           </div>
-          <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+          <div className="truncate text-xs" style={{ color: 'var(--color-text-secondary)' }}>
             Scroll through the next 24 hours
           </div>
         </div>
-        <div className="info-pill" style={{ color: 'var(--color-accent)' }}>
+        <div className="info-pill shrink-0 whitespace-nowrap" style={{ color: 'var(--color-accent)' }}>
           {currentTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
         </div>
       </div>

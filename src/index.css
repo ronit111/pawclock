@@ -52,10 +52,12 @@
     0 2px 8px rgba(82, 55, 31, 0.06);
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 html {
@@ -228,6 +230,8 @@ textarea::placeholder {
   letter-spacing: -0.05em;
   font-weight: 700;
   color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .page-title em {
@@ -329,6 +333,7 @@ textarea::placeholder {
     linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(252, 246, 240, 0.88));
   border: 1px solid rgba(127, 100, 76, 0.09);
   box-shadow: var(--shadow-sm);
+  overflow: hidden;
 }
 
 .metric-label {
@@ -363,6 +368,9 @@ textarea::placeholder {
   background: rgba(255, 255, 255, 0.74);
   color: var(--color-text-secondary);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .eyebrow-pill {

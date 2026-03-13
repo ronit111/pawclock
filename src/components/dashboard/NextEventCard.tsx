@@ -122,31 +122,31 @@ const NextEventCard = memo(function NextEventCard({
         aria-label={`${subtitle}: ${timeRange}, ${confidence}% likely, ${countdown}`}
       >
         <div className="flex flex-col gap-4">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-start justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
               <div
-                className="icon-badge"
+                className="icon-badge shrink-0"
                 style={{ background: tint, color }}
               >
                 <Icon />
               </div>
-              <div className="flex flex-col gap-1">
+              <div className="flex min-w-0 flex-col gap-1">
                 <span className="metric-label" style={{ color }}>
                   Spotlight window
                 </span>
-                <span className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                <span className="truncate text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                   {label}
                 </span>
               </div>
             </div>
 
-            <div className="info-pill shrink-0" style={{ color }}>
+            <div className="info-pill shrink-0 whitespace-nowrap" style={{ color }}>
               {confidence}% likely
             </div>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <span className="font-data text-[1.9rem] leading-[1.05]" style={{ color: 'var(--color-text-primary)' }}>
+          <div className="flex min-w-0 flex-col gap-2">
+            <span className="truncate font-data text-[1.9rem] leading-[1.05]" style={{ color: 'var(--color-text-primary)' }}>
               {timeRange}
             </span>
             <div className="flex flex-wrap items-center gap-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
@@ -182,7 +182,7 @@ const NextEventCard = memo(function NextEventCard({
       className="surface-card p-4"
       aria-label={`${subtitle}: ${timeRange}, ${confidence}% likely, ${countdown}`}
     >
-      <div className="flex items-start gap-4">
+      <div className="flex min-w-0 items-start gap-4">
         <div
           className="icon-badge shrink-0"
           style={{ background: tint, color }}
@@ -194,7 +194,7 @@ const NextEventCard = memo(function NextEventCard({
           <span className="metric-label" style={{ color }}>
             {subtitle}
           </span>
-          <span className="font-data text-[1.45rem] leading-tight" style={{ color: 'var(--color-text-primary)' }}>
+          <span className="truncate font-data text-[1.45rem] leading-tight" style={{ color: 'var(--color-text-primary)' }}>
             {timeRange}
           </span>
           <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
@@ -202,7 +202,7 @@ const NextEventCard = memo(function NextEventCard({
           </span>
         </div>
 
-        <div className="shrink-0 rounded-full px-3 py-1.5 text-sm font-semibold" style={{ background: tint, color }}>
+        <div className="shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-semibold" style={{ background: tint, color }}>
           {confidence}%
         </div>
       </div>
