@@ -428,7 +428,7 @@ const QuickLogPanel = memo(function QuickLogPanel({
                 }}
               >
                 <div className="flex w-full items-start justify-between gap-3">
-                  <div className="icon-badge" style={{ background: card.tint, color: card.color }}>
+                  <div className="icon-badge shrink-0" style={{ background: card.tint, color: card.color }}>
                     {card.icon}
                   </div>
                   <div

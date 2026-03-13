@@ -35,7 +35,7 @@ const ConfidenceIndicator = memo(function ConfidenceIndicator({
       aria-label={`Model confidence: ${label}, ${Math.round(pct * 100)}%`}
     >
       <div
-        className="rounded-full"
+        className="shrink-0 rounded-full"
         style={{
           width: isSmall ? 6 : 8,
           height: isSmall ? 6 : 8,
